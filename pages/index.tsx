@@ -99,11 +99,14 @@ function Module({ module }: { module: AptosModule }) {
 }
 
 function functionSignature(func: AptosFunction): string {
-  return `${func.name}<${typeArgPlaceholders(
+  return `${func.name}${typeArgPlaceholders(
     func.generic_type_params.length
-  )}>(${func.params.join(", ")})`;
+  )}(${func.params.join(", ")})`;
 }
 
 function typeArgPlaceholders(n: number): string {
-  return Array.from({ length: n }, (_, i) => "T" + i).join(", ");
+  if (n === 0) {
+    return "";
+  }
+  return "<" + Array.from({ length: n }, (_, i) => "T" + i).join(", ") + ">";
 }
