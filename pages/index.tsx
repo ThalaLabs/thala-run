@@ -30,6 +30,8 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export default function Home() {
   const router = useRouter();
   const account = (router.query["account"] || "") as string;
+
+  const accountEmpty = account.length === 0;
   const accountValid = account.length === 66;
 
   const { data, error } = useSWR<AptosModule[]>(
@@ -46,9 +48,6 @@ export default function Home() {
         <Stack spacing="5">
           <Stack spacing="5" align="center">
             <Heading size="md">Call Move Txns</Heading>
-            <Text maxW="2xl" textAlign="center" fontSize="xl">
-              Start by pasting an account address!
-            </Text>
             <Input
               placeholder="account address"
               value={account}
@@ -60,7 +59,11 @@ export default function Home() {
               }}
             />
           </Stack>
-          {isLoading ? (
+          {accountEmpty ? (
+            <></>
+          ) : !accountValid ? (
+            <Text color="red">not a valid account</Text>
+          ) : isLoading ? (
             <Spinner />
           ) : error !== undefined ? (
             <Text color="red">{error.message}</Text>
