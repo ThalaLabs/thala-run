@@ -29,7 +29,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Home() {
   const router = useRouter();
-  const account = router.query["account"] as string;
+  const account = (router.query["account"] || "") as string;
   const accountValid = account.length === 66;
 
   const { data, error } = useSWR<AptosModule[]>(
