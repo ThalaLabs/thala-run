@@ -124,7 +124,7 @@ function Module({ module }: { module: AptosModule }) {
           {entryFuncs.map((func) => (
             <AccordionItem key={func.name}>
               <h2>
-                <AccordionButton>
+                <AccordionButton _expanded={{ bg: "black", color: "white" }}>
                   <Box flex="1" textAlign="left">
                     {functionSignature(func)}
                   </Box>
