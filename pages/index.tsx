@@ -131,10 +131,7 @@ export default function Home() {
           ) : error !== undefined ? (
             <Text color="red">{error.message}</Text>
           ) : (
-            <WriteContract
-              aptosClient={getAptosClient(network)}
-              modules={data!}
-            />
+            <WriteContract network={network} modules={data!} />
           )}
         </Stack>
       </Container>
@@ -143,31 +140,27 @@ export default function Home() {
 }
 
 function WriteContract({
-  aptosClient,
+  network,
   modules,
 }: {
-  aptosClient: AptosClient;
+  network: string;
   modules: Types.MoveModuleBytecode[];
 }) {
   modules.sort((a, b) => a.abi!.name.localeCompare(b.abi!.name));
   return (
     <List spacing="5">
       {modules.map((module) => (
-        <Module
-          key={module.abi!.name}
-          aptosClient={aptosClient}
-          module={module}
-        />
+        <Module key={module.abi!.name} network={network} module={module} />
       ))}
     </List>
   );
 }
 
 function Module({
-  aptosClient,
+  network,
   module,
 }: {
-  aptosClient: AptosClient;
+  network: string;
   module: Types.MoveModuleBytecode;
 }) {
   const entryFuncs = module.abi!.exposed_functions.filter(
@@ -200,7 +193,7 @@ function Module({
               </h2>
               <AccordionPanel pb={4}>
                 <CallTxForm
-                  aptosClient={aptosClient}
+                  network={network}
                   module={`${module.abi!.address}::${module.abi!.name}`}
                   func={func}
                 />
@@ -214,11 +207,11 @@ function Module({
 }
 
 function CallTxForm({
-  aptosClient,
+  network,
   module,
   func,
 }: {
-  aptosClient: AptosClient;
+  network: string;
   module: string;
   func: Types.MoveFunction;
 }) {
@@ -233,11 +226,11 @@ function CallTxForm({
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const typeArgs = data.typeArgs.length === 0 ? [] : data.typeArgs.split(",");
     const args = data.args.length === 0 ? [] : data.args.split(",");
-    await onSignAndSubmitTransaction(aptosClient, typeArgs, args);
+    await onSignAndSubmitTransaction(network, typeArgs, args);
   };
 
   async function onSignAndSubmitTransaction(
-    aptosClient: AptosClient,
+    network: string,
     typeArgs: string[],
     args: any[]
   ) {
@@ -249,13 +242,13 @@ function CallTxForm({
     };
     try {
       const { hash } = await signAndSubmitTransaction(payload);
-      await aptosClient.waitForTransaction(hash);
+      await getAptosClient(network).waitForTransaction(hash);
       toast({
         title: "Transaction submitted.",
         description: (
           <Link
             as={NextLink}
-            href={`https://explorer.aptoslabs.com/txn/${hash}`}
+            href={`https://explorer.aptoslabs.com/txn/${hash}?network=${network}`}
             isExternal
           >
             View on explorer <ExternalLinkIcon mx="2px" />
