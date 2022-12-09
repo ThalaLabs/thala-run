@@ -1,14 +1,25 @@
 import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
   Box,
+  Button,
   Container,
   Heading,
+  HStack,
   Stack,
   Text,
+  Textarea,
   Input,
   Spinner,
   List,
+  FormControl,
+  FormLabel,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { useForm, SubmitHandler } from "react-hook-form";
 import useSWR from "swr";
 
 interface AptosModule {
@@ -16,6 +27,11 @@ interface AptosModule {
     name: string;
     exposed_functions: AptosFunction[];
   };
+}
+
+interface IFormInput {
+  typeArgs: string;
+  args: string;
 }
 
 interface AptosFunction {
@@ -47,8 +63,10 @@ export default function Home() {
       <Container py="24">
         <Stack spacing="5">
           <Stack spacing="5" align="center">
-            <Heading size="md">Call Move Txns</Heading>
-            <Input
+            <Heading size="md">
+              MoveTx: Think Etherscan Write Contract, but for Move
+            </Heading>
+            <Textarea
               placeholder="account address"
               value={account}
               onChange={async (e) => {
@@ -87,17 +105,62 @@ function WriteContract({ modules }: { modules: AptosModule[] }) {
 }
 
 function Module({ module }: { module: AptosModule }) {
+  const entryFuncs = module.abi.exposed_functions.filter(
+    (func) => func.is_entry
+  );
   return (
     <Stack spacing="5">
-      <Heading size="md">{module.abi.name}</Heading>
-      <List spacing="3">
-        {module.abi.exposed_functions
-          .filter((func) => func.is_entry)
-          .map((func) => (
-            <Text key={func.name}>{functionSignature(func)}</Text>
+      <HStack>
+        <Text backgroundColor={"gray.200"} paddingX={1}>
+          module
+        </Text>
+        <Text as="b">{module.abi.name}</Text>
+      </HStack>
+      {entryFuncs.length === 0 ? (
+        <Text>no entry function</Text>
+      ) : (
+        <Accordion allowToggle>
+          {entryFuncs.map((func) => (
+            <AccordionItem key={func.name}>
+              <h2>
+                <AccordionButton>
+                  <Box flex="1" textAlign="left">
+                    {functionSignature(func)}
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={4}>
+                <CallTxForm func={func} />
+              </AccordionPanel>
+            </AccordionItem>
           ))}
-      </List>
+        </Accordion>
+      )}
     </Stack>
+  );
+}
+
+function CallTxForm({ func }: { func: AptosFunction }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<IFormInput>();
+  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+  // TODO: checkout https://chakra-ui.com/getting-started/with-hook-form to add errors handling
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormControl>
+        <FormLabel size="sm">Type Args</FormLabel>
+        <Input {...register("typeArgs")} />
+        <FormLabel>Args</FormLabel>
+        <Input {...register("args")} />
+        <Button mt="4" variant="outline" isLoading={isSubmitting} type="submit">
+          Submit
+        </Button>
+      </FormControl>
+    </form>
   );
 }
 
