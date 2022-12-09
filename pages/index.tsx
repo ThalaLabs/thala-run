@@ -65,7 +65,7 @@ export default function Home() {
 
   return (
     <Box as="section" bg="bg-surface">
-      <Container py="24">
+      <Container py="10">
         <Stack spacing="5">
           <Stack spacing="5" align="center">
             <Heading size="md">
