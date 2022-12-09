@@ -16,6 +16,10 @@ import {
   Spinner,
   Link,
   List,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -27,6 +31,7 @@ import {
   useToast,
   useDisclosure,
 } from "@chakra-ui/react";
+import { ChevronDownIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { AptosClient, Types } from "aptos";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
@@ -34,63 +39,70 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import useSWR from "swr";
 
-interface AptosModule {
-  abi: {
-    address: string;
-    name: string;
-    exposed_functions: AptosFunction[];
-  };
-}
-
 interface IFormInput {
   typeArgs: string;
   args: string;
 }
 
-interface AptosFunction {
-  name: string;
-  is_entry: boolean;
-  generic_type_params: { constraints: string[] }[];
-  params: string[];
-}
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-const aptosClient = new AptosClient("https://fullnode.testnet.aptoslabs.com");
+const FULLNODES: { [network: string]: string } = {
+  devnet: "https://fullnode.devnet.aptoslabs.com",
+  testnet: "https://fullnode.testnet.aptoslabs.com",
+  mainnet: "https://fullnode.mainnet.aptoslabs.com",
+};
 
 export default function Home() {
   const router = useRouter();
   const account = (router.query["account"] || "") as string;
+  const network = (router.query["network"] || "mainnet") as string;
 
   const accountEmpty = account.length === 0;
   const accountValid = account.length === 66;
 
-  const { data, error } = useSWR<AptosModule[]>(
-    accountValid
-      ? `https://testnet.aptoslabs.com/v1/accounts/${account}/modules`
-      : null,
-    fetcher
+  const { data, error } = useSWR<Types.MoveModuleBytecode[]>(
+    accountValid ? [account, network] : null,
+    (account, network) => getAptosClient(network).getAccountModules(account)
   );
+
   const isLoading = !error && !data;
 
   return (
     <Box as="section" bg="bg-surface">
-      <Container py="10">
+      <Container as="nav" py="5">
+        <HStack spacing="10" justify="space-between">
+          <Heading size="md">MoveTx: The missing tx runner for Move</Heading>
+          <Menu>
+            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+              {network}
+            </MenuButton>
+            <MenuList>
+              {Object.keys(FULLNODES).map((network) => (
+                <MenuItem
+                  key={network}
+                  onClick={async () => {
+                    await router.replace({
+                      query: { ...router.query, network },
+                    });
+                  }}
+                >
+                  {network}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+        </HStack>
+      </Container>
+      <Container py="5">
         <Stack spacing="5">
-          <Stack spacing="5" align="center">
-            <Heading size="md">
-              MoveTx: Think Etherscan Write Contract, but for Move
-            </Heading>
-            <Textarea
-              placeholder="0x... account address"
-              value={account}
-              onChange={async (e) => {
-                const account = e.target.value;
-                await router.replace({
-                  query: { ...router.query, account },
-                });
-              }}
-            />
-          </Stack>
+          <Textarea
+            placeholder="0x... account address"
+            value={account}
+            onChange={async (e) => {
+              const account = e.target.value;
+              await router.replace({
+                query: { ...router.query, account },
+              });
+            }}
+          />
           {accountEmpty ? (
             <></>
           ) : !accountValid ? (
@@ -100,7 +112,10 @@ export default function Home() {
           ) : error !== undefined ? (
             <Text color="red">{error.message}</Text>
           ) : (
-            <WriteContract modules={data!} />
+            <WriteContract
+              aptosClient={getAptosClient(network)}
+              modules={data!}
+            />
           )}
         </Stack>
       </Container>
@@ -108,19 +123,35 @@ export default function Home() {
   );
 }
 
-function WriteContract({ modules }: { modules: AptosModule[] }) {
-  modules.sort((a, b) => a.abi.name.localeCompare(b.abi.name));
+function WriteContract({
+  aptosClient,
+  modules,
+}: {
+  aptosClient: AptosClient;
+  modules: Types.MoveModuleBytecode[];
+}) {
+  modules.sort((a, b) => a.abi!.name.localeCompare(b.abi!.name));
   return (
     <List spacing="5">
       {modules.map((module) => (
-        <Module key={module.abi.name} module={module} />
+        <Module
+          key={module.abi!.name}
+          aptosClient={aptosClient}
+          module={module}
+        />
       ))}
     </List>
   );
 }
 
-function Module({ module }: { module: AptosModule }) {
-  const entryFuncs = module.abi.exposed_functions.filter(
+function Module({
+  aptosClient,
+  module,
+}: {
+  aptosClient: AptosClient;
+  module: Types.MoveModuleBytecode;
+}) {
+  const entryFuncs = module.abi!.exposed_functions.filter(
     (func) => func.is_entry
   );
   if (entryFuncs.length === 0) {
@@ -132,7 +163,7 @@ function Module({ module }: { module: AptosModule }) {
         <Text backgroundColor={"gray.200"} paddingX={1}>
           module
         </Text>
-        <Text as="b">{module.abi.name}</Text>
+        <Text as="b">{module.abi!.name}</Text>
       </HStack>
       {entryFuncs.length === 0 ? (
         <Text>no entry function</Text>
@@ -150,7 +181,8 @@ function Module({ module }: { module: AptosModule }) {
               </h2>
               <AccordionPanel pb={4}>
                 <CallTxForm
-                  module={`${module.abi.address}::${module.abi.name}`}
+                  aptosClient={aptosClient}
+                  module={`${module.abi!.address}::${module.abi!.name}`}
                   func={func}
                 />
               </AccordionPanel>
@@ -162,8 +194,16 @@ function Module({ module }: { module: AptosModule }) {
   );
 }
 
-function CallTxForm({ module, func }: { module: string; func: AptosFunction }) {
-  const { connect, connected, signAndSubmitTransaction } = useWallet();
+function CallTxForm({
+  aptosClient,
+  module,
+  func,
+}: {
+  aptosClient: AptosClient;
+  module: string;
+  func: Types.MoveFunction;
+}) {
+  const { connected, signAndSubmitTransaction } = useWallet();
   const {
     register,
     handleSubmit,
@@ -174,10 +214,14 @@ function CallTxForm({ module, func }: { module: string; func: AptosFunction }) {
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const typeArgs = data.typeArgs.length === 0 ? [] : data.typeArgs.split(",");
     const args = data.args.length === 0 ? [] : data.args.split(",");
-    await onSignAndSubmitTransaction(typeArgs, args);
+    await onSignAndSubmitTransaction(aptosClient, typeArgs, args);
   };
 
-  async function onSignAndSubmitTransaction(typeArgs: string[], args: any[]) {
+  async function onSignAndSubmitTransaction(
+    aptosClient: AptosClient,
+    typeArgs: string[],
+    args: any[]
+  ) {
     const payload: Types.TransactionPayload = {
       type: "entry_function_payload",
       function: `${module}::${func.name}`,
@@ -195,7 +239,7 @@ function CallTxForm({ module, func }: { module: string; func: AptosFunction }) {
             href={`https://explorer.aptoslabs.com/txn/${hash}`}
             isExternal
           >
-            View on explorer
+            View on explorer <ExternalLinkIcon mx="2px" />
           </Link>
         ),
         status: "success",
@@ -283,7 +327,11 @@ function ConnectWalletModal() {
   );
 }
 
-function functionSignature(func: AptosFunction): string {
+function getAptosClient(network: string): AptosClient {
+  return new AptosClient(FULLNODES[network]);
+}
+
+function functionSignature(func: Types.MoveFunction): string {
   return `${func.name}${typeArgPlaceholders(
     func.generic_type_params.length
   )}(${func.params.join(", ")})`;
