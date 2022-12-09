@@ -72,7 +72,7 @@ export default function Home() {
               MoveTx: Think Etherscan Write Contract, but for Move
             </Heading>
             <Textarea
-              placeholder="account address"
+              placeholder="0x... account address"
               value={account}
               onChange={async (e) => {
                 const account = e.target.value;
@@ -216,7 +216,7 @@ function CallTxForm({ module, func }: { module: string; func: AptosFunction }) {
             variant="outline"
             onClick={() => connect(PetraWalletName)}
           >
-            Connect Wallet
+            Connect Petra Wallet
           </Button>
         )}
       </FormControl>
