@@ -71,7 +71,7 @@ export default function Home() {
     <Box as="section" bg="bg-surface">
       <Container as="nav" py="5">
         <HStack spacing="10" justify="space-between">
-          <Heading size="md">MoveTx: The missing tx runner for Aptos</Heading>
+          <Heading size="md">MoveTx: the missing txn runner of Aptos</Heading>
           <Menu>
             <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
               {network}
