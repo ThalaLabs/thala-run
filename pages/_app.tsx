@@ -1,4 +1,5 @@
 import type { AppProps } from "next/app";
+import { Analytics } from "@vercel/analytics/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { PetraWallet } from "petra-plugin-wallet-adapter";
 import { MartianWallet } from "../components/wallets/MartianWallet";
@@ -12,6 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
         autoConnect={true}
       >
         <Component {...pageProps} />
+        <Analytics />
       </AptosWalletAdapterProvider>
     </ChakraProvider>
   );
