@@ -19,7 +19,9 @@ import {
   FormLabel,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { PetraWalletName } from "petra-plugin-wallet-adapter";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import useSWR from "swr";
 
 interface AptosModule {
@@ -124,7 +126,7 @@ function Module({ module }: { module: AptosModule }) {
           {entryFuncs.map((func) => (
             <AccordionItem key={func.name}>
               <h2>
-                <AccordionButton _expanded={{ bg: "black", color: "white" }}>
+                <AccordionButton _expanded={{ bg: "gray.100" }}>
                   <Box flex="1" textAlign="left">
                     {functionSignature(func)}
                   </Box>
@@ -143,6 +145,7 @@ function Module({ module }: { module: AptosModule }) {
 }
 
 function CallTxForm({ func }: { func: AptosFunction }) {
+  const { connected } = useWallet();
   const {
     register,
     handleSubmit,
@@ -157,11 +160,29 @@ function CallTxForm({ func }: { func: AptosFunction }) {
         <Input {...register("typeArgs")} />
         <FormLabel>Args</FormLabel>
         <Input {...register("args")} />
-        <Button mt="4" variant="outline" isLoading={isSubmitting} type="submit">
-          Submit
-        </Button>
+        {connected ? (
+          <Button
+            mt="4"
+            variant="outline"
+            isLoading={isSubmitting}
+            type="submit"
+          >
+            Run
+          </Button>
+        ) : (
+          <ConnectWalletButton />
+        )}
       </FormControl>
     </form>
+  );
+}
+
+function ConnectWalletButton() {
+  const { connect } = useWallet();
+  return (
+    <Button mt="4" variant="outline" onClick={() => connect(PetraWalletName)}>
+      Connect Wallet
+    </Button>
   );
 }
 

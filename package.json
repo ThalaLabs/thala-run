@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aptos-labs/wallet-adapter-react": "^0.1.7",
     "@chakra-ui/react": "^2.4.3",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
@@ -19,6 +20,7 @@
     "eslint-config-next": "13.0.6",
     "framer-motion": "^6",
     "next": "13.0.6",
+    "petra-plugin-wallet-adapter": "^0.1.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.40.0",
