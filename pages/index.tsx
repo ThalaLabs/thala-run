@@ -114,6 +114,9 @@ function Module({ module }: { module: AptosModule }) {
   const entryFuncs = module.abi.exposed_functions.filter(
     (func) => func.is_entry
   );
+  if (entryFuncs.length === 0) {
+    return <></>
+  }
   return (
     <Stack spacing="5">
       <HStack>
