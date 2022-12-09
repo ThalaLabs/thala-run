@@ -14,12 +14,15 @@ import {
   Textarea,
   Input,
   Spinner,
+  Link,
   List,
   FormControl,
   FormLabel,
+  useToast,
 } from "@chakra-ui/react";
 import { AptosClient, Types } from "aptos";
 import { useRouter } from "next/router";
+import NextLink from "next/link";
 import { PetraWalletName } from "petra-plugin-wallet-adapter";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
@@ -115,7 +118,7 @@ function Module({ module }: { module: AptosModule }) {
     (func) => func.is_entry
   );
   if (entryFuncs.length === 0) {
-    return <></>
+    return <></>;
   }
   return (
     <Stack spacing="5">
@@ -160,6 +163,7 @@ function CallTxForm({ module, func }: { module: string; func: AptosFunction }) {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<IFormInput>();
+  const toast = useToast();
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const typeArgs = data.typeArgs.length === 0 ? [] : data.typeArgs.split(",");
@@ -175,12 +179,32 @@ function CallTxForm({ module, func }: { module: string; func: AptosFunction }) {
       arguments: args,
     };
     try {
-      const response = await signAndSubmitTransaction(payload);
-      // if you want to wait for transaction
-      await aptosClient.waitForTransaction(response?.hash || "");
-      console.log(response?.hash);
+      const { hash } = await signAndSubmitTransaction(payload);
+      await aptosClient.waitForTransaction(hash);
+      toast({
+        title: "Transaction submitted.",
+        description: (
+          <Link
+            as={NextLink}
+            href={`https://explorer.aptoslabs.com/txn/${hash}`}
+            isExternal
+          >
+            View on explorer
+          </Link>
+        ),
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
     } catch (error: any) {
       console.log("error", error);
+      toast({
+        title: "An error occurred.",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   }
 
