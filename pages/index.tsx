@@ -18,6 +18,7 @@ import {
   FormControl,
   FormLabel,
 } from "@chakra-ui/react";
+import { AptosClient, Types } from "aptos";
 import { useRouter } from "next/router";
 import { PetraWalletName } from "petra-plugin-wallet-adapter";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -26,6 +27,7 @@ import useSWR from "swr";
 
 interface AptosModule {
   abi: {
+    address: string;
     name: string;
     exposed_functions: AptosFunction[];
   };
@@ -44,6 +46,7 @@ interface AptosFunction {
 }
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const aptosClient = new AptosClient("https://fullnode.testnet.aptoslabs.com");
 
 export default function Home() {
   const router = useRouter();
@@ -134,7 +137,10 @@ function Module({ module }: { module: AptosModule }) {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4}>
-                <CallTxForm func={func} />
+                <CallTxForm
+                  module={`${module.abi.address}::${module.abi.name}`}
+                  func={func}
+                />
               </AccordionPanel>
             </AccordionItem>
           ))}
@@ -144,22 +150,57 @@ function Module({ module }: { module: AptosModule }) {
   );
 }
 
-function CallTxForm({ func }: { func: AptosFunction }) {
-  const { connected } = useWallet();
+function CallTxForm({ module, func }: { module: string; func: AptosFunction }) {
+  const { connect, connected, signAndSubmitTransaction } = useWallet();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const typeArgs = data.typeArgs.length === 0 ? [] : data.typeArgs.split(",");
+    const args = data.args.length === 0 ? [] : data.args.split(",");
+    await onSignAndSubmitTransaction(typeArgs, args);
+  };
+
+  async function onSignAndSubmitTransaction(typeArgs: string[], args: any[]) {
+    const payload: Types.TransactionPayload = {
+      type: "entry_function_payload",
+      function: `${module}::${func.name}`,
+      type_arguments: typeArgs,
+      arguments: args,
+    };
+    try {
+      const response = await signAndSubmitTransaction(payload);
+      // if you want to wait for transaction
+      await aptosClient.waitForTransaction(response?.hash || "");
+      console.log(response?.hash);
+    } catch (error: any) {
+      console.log("error", error);
+    }
+  }
+
   // TODO: checkout https://chakra-ui.com/getting-started/with-hook-form to add errors handling
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FormControl>
-        <FormLabel size="sm">Type Args</FormLabel>
-        <Input {...register("typeArgs")} />
-        <FormLabel>Args</FormLabel>
-        <Input {...register("args")} />
+        {func.generic_type_params.length > 0 && (
+          <>
+            <FormLabel size="sm">type args</FormLabel>
+            <Input
+              placeholder="comma separated type args"
+              {...register("typeArgs")}
+            />
+          </>
+        )}
+        {func.params.length > 0 &&
+          !(func.params.length === 1 && func.params[0] !== "&signer") && (
+            <>
+              <FormLabel>args</FormLabel>
+              <Input placeholder="comma separated args" {...register("args")} />
+            </>
+          )}
         {connected ? (
           <Button
             mt="4"
@@ -170,19 +211,16 @@ function CallTxForm({ func }: { func: AptosFunction }) {
             Run
           </Button>
         ) : (
-          <ConnectWalletButton />
+          <Button
+            mt="4"
+            variant="outline"
+            onClick={() => connect(PetraWalletName)}
+          >
+            Connect Wallet
+          </Button>
         )}
       </FormControl>
     </form>
-  );
-}
-
-function ConnectWalletButton() {
-  const { connect } = useWallet();
-  return (
-    <Button mt="4" variant="outline" onClick={() => connect(PetraWalletName)}>
-      Connect Wallet
-    </Button>
   );
 }
 
