@@ -7,8 +7,10 @@ import {
   Box,
   Button,
   Container,
+  Flex,
   Heading,
   HStack,
+  Spacer,
   Stack,
   Text,
   Textarea,
@@ -93,6 +95,23 @@ export default function Home() {
       </Container>
       <Container py="5">
         <Stack spacing="5">
+          <Flex w="full">
+            <Text>Try examples 👉</Text>
+            <Spacer />
+            <Link
+              as={NextLink}
+              href="/?account=0x96c2a8e775207b8f8ee8d3a6e4a68f70fcaaddcdcaa1f3511ef38e18d4492a8d&network=testnet"
+            >
+              Move Dollar (testnet)
+            </Link>
+            <Spacer />
+            <Link
+              as={NextLink}
+              href="/?account=0x190d44266241744264b964a37b8f09863167a12d3e70cda39376cfb4e3561e12&network=mainnet"
+            >
+              Liquidswap (mainnet)
+            </Link>
+          </Flex>
           <Textarea
             placeholder="0x... account address"
             value={account}
