@@ -95,6 +95,7 @@ export default function Home() {
 }
 
 function WriteContract({ modules }: { modules: AptosModule[] }) {
+  modules.sort((a, b) => a.abi.name.localeCompare(b.abi.name));
   return (
     <List spacing="5">
       {modules.map((module) => (
