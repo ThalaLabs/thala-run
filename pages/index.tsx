@@ -284,7 +284,7 @@ function CallTxForm({
           </>
         )}
         {func.params.length > 0 &&
-          !(func.params.length === 1 && func.params[0] !== "&signer") && (
+          !(func.params.length === 1 && func.params[0] === "&signer") && (
             <>
               <FormLabel>args</FormLabel>
               <Input placeholder="comma separated args" {...register("args")} />
