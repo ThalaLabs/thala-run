@@ -100,16 +100,16 @@ export default function Home() {
             <Spacer />
             <Link
               as={NextLink}
-              href="/?account=0x96c2a8e775207b8f8ee8d3a6e4a68f70fcaaddcdcaa1f3511ef38e18d4492a8d&network=testnet"
+              href="/?account=0x867ed1f6bf916171b1de3ee92849b8978b7d1b9e0a8cc982a3d19d535dfd9c0c&network=mainnet"
             >
-              Move Dollar (testnet)
+              Aptos Names (mainnet)
             </Link>
             <Spacer />
             <Link
               as={NextLink}
-              href="/?account=0x190d44266241744264b964a37b8f09863167a12d3e70cda39376cfb4e3561e12&network=mainnet"
+              href="/?account=0x7e783b349d3e89cf5931af376ebeadbfab855b3fa239b7ada8f5a92fbea6b387&network=mainnet"
             >
-              Liquidswap (mainnet)
+              Pyth Oracle (mainnet)
             </Link>
           </Flex>
           <Textarea
