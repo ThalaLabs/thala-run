@@ -42,8 +42,8 @@ import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import useSWR from "swr";
 
 interface IFormInput {
-  typeArgs: string;
-  args: string;
+  typeArgs: string[];
+  args: any[];
 }
 
 const FULLNODES: { [network: string]: string } = {
@@ -219,14 +219,19 @@ function CallTxForm({
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
-  } = useForm<IFormInput>();
+  } = useForm<IFormInput>({
+    defaultValues: {
+      typeArgs: [],
+      args: [],
+    },
+  });
+
   const toast = useToast();
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    const typeArgs = data.typeArgs.length === 0 ? [] : data.typeArgs.split(",");
-    const args = data.args.length === 0 ? [] : data.args.split(",");
-    await onSignAndSubmitTransaction(network, typeArgs, args);
+    await onSignAndSubmitTransaction(network, data.typeArgs, data.args);
   };
 
   async function onSignAndSubmitTransaction(
@@ -274,25 +279,28 @@ function CallTxForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FormControl>
-        {func.generic_type_params.length > 0 && (
-          <>
-            <FormLabel size="sm">type args</FormLabel>
-            <Input
-              placeholder="comma separated type args"
-              {...register("typeArgs")}
-            />
-          </>
-        )}
+        {func.generic_type_params.length > 0 &&
+          func.generic_type_params.map((_, i) => (
+            <Box my={2} key={i.toString()}>
+              <FormLabel size="sm">T{i}</FormLabel>
+              <Textarea {...register(`typeArgs.${i}`)} />
+            </Box>
+          ))}
         {func.params.length > 0 &&
-          !(func.params.length === 1 && func.params[0] === "&signer") && (
-            <>
-              <FormLabel>args</FormLabel>
-              <Input placeholder="comma separated args" {...register("args")} />
-            </>
-          )}
+          !(func.params.length === 1 && func.params[0] === "&signer") &&
+          func.params
+            .filter((param, i) => i !== 0 && param !== "&signer")
+            .map((param, i) => (
+              <Box my={2} key={i.toString()}>
+                <FormLabel>
+                  arg{i}({param})
+                </FormLabel>
+                <Input {...register(`args.${i}`)} />
+              </Box>
+            ))}
         {connected ? (
           <Button
-            mt="4"
+            mt="2"
             variant="outline"
             isLoading={isSubmitting}
             type="submit"
@@ -312,7 +320,7 @@ function ConnectWalletModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Button onClick={onOpen} mt="4" variant="outline">
+      <Button onClick={onOpen} mt="2" variant="outline">
         Connect Wallet
       </Button>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
