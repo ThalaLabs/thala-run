@@ -1,9 +1,4 @@
 import {
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
   Box,
   Button,
   Container,
@@ -14,43 +9,20 @@ import {
   Stack,
   Text,
   Textarea,
-  Input,
   Spinner,
   Link,
-  List,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  useToast,
-  useDisclosure,
 } from "@chakra-ui/react";
-import { ChevronDownIcon, ExternalLinkIcon } from "@chakra-ui/icons";
-import { AptosClient, Types } from "aptos";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { Types } from "aptos";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import useSWR from "swr";
-
-interface IFormInput {
-  typeArgs: string[];
-  args: any[];
-}
-
-const FULLNODES: { [network: string]: string } = {
-  devnet: "https://fullnode.devnet.aptoslabs.com",
-  testnet: "https://fullnode.testnet.aptoslabs.com",
-  mainnet: "https://fullnode.mainnet.aptoslabs.com",
-};
+import { ModuleList } from "../components/ModuleList";
+import { FULLNODES, getAptosClient } from "../lib/utils";
 
 export default function Home() {
   const router = useRouter();
@@ -131,235 +103,10 @@ export default function Home() {
           ) : error !== undefined ? (
             <Text color="red">{error.message}</Text>
           ) : (
-            <WriteContract network={network} modules={data!} />
+            <ModuleList network={network} modules={data!} />
           )}
         </Stack>
       </Container>
     </Box>
   );
-}
-
-function WriteContract({
-  network,
-  modules,
-}: {
-  network: string;
-  modules: Types.MoveModuleBytecode[];
-}) {
-  modules.sort((a, b) => a.abi!.name.localeCompare(b.abi!.name));
-  return (
-    <List spacing="5">
-      {modules.map((module) => (
-        <Module key={module.abi!.name} network={network} module={module} />
-      ))}
-    </List>
-  );
-}
-
-function Module({
-  network,
-  module,
-}: {
-  network: string;
-  module: Types.MoveModuleBytecode;
-}) {
-  const entryFuncs = module.abi!.exposed_functions.filter(
-    (func) => func.is_entry
-  );
-  if (entryFuncs.length === 0) {
-    return <></>;
-  }
-  return (
-    <Stack spacing="5">
-      <HStack>
-        <Text backgroundColor={"gray.200"} paddingX={1}>
-          module
-        </Text>
-        <Text as="b">{module.abi!.name}</Text>
-      </HStack>
-      {entryFuncs.length === 0 ? (
-        <Text>no entry function</Text>
-      ) : (
-        <Accordion allowToggle>
-          {entryFuncs.map((func) => (
-            <AccordionItem key={func.name}>
-              <h2>
-                <AccordionButton _expanded={{ bg: "gray.100" }}>
-                  <Box flex="1" textAlign="left">
-                    {functionSignature(func)}
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-              </h2>
-              <AccordionPanel pb={4}>
-                <CallTxForm
-                  network={network}
-                  module={`${module.abi!.address}::${module.abi!.name}`}
-                  func={func}
-                />
-              </AccordionPanel>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      )}
-    </Stack>
-  );
-}
-
-function CallTxForm({
-  network,
-  module,
-  func,
-}: {
-  network: string;
-  module: string;
-  func: Types.MoveFunction;
-}) {
-  const { connected, signAndSubmitTransaction } = useWallet();
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors, isSubmitting },
-  } = useForm<IFormInput>({
-    defaultValues: {
-      typeArgs: [],
-      args: [],
-    },
-  });
-
-  const toast = useToast();
-
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    await onSignAndSubmitTransaction(network, data.typeArgs, data.args);
-  };
-
-  async function onSignAndSubmitTransaction(
-    network: string,
-    typeArgs: string[],
-    args: any[]
-  ) {
-    const payload: Types.TransactionPayload = {
-      type: "entry_function_payload",
-      function: `${module}::${func.name}`,
-      type_arguments: typeArgs,
-      arguments: args,
-    };
-    try {
-      const { hash } = await signAndSubmitTransaction(payload);
-      await getAptosClient(network).waitForTransaction(hash);
-      toast({
-        title: "Transaction submitted.",
-        description: (
-          <Link
-            as={NextLink}
-            href={`https://explorer.aptoslabs.com/txn/${hash}?network=${network}`}
-            isExternal
-          >
-            View on explorer <ExternalLinkIcon mx="2px" />
-          </Link>
-        ),
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-    } catch (error: any) {
-      console.log("error", error);
-      toast({
-        title: "An error occurred.",
-        description: error.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  }
-
-  // TODO: checkout https://chakra-ui.com/getting-started/with-hook-form to add errors handling
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <FormControl>
-        {func.generic_type_params.length > 0 &&
-          func.generic_type_params.map((_, i) => (
-            <Box my={2} key={i.toString()}>
-              <FormLabel size="sm">T{i}</FormLabel>
-              <Textarea {...register(`typeArgs.${i}`)} />
-            </Box>
-          ))}
-        {func.params.length > 0 &&
-          !(func.params.length === 1 && func.params[0] === "&signer") &&
-          func.params
-            .filter((param, i) => i !== 0 && param !== "&signer")
-            .map((param, i) => (
-              <Box my={2} key={i.toString()}>
-                <FormLabel>
-                  arg{i}({param})
-                </FormLabel>
-                <Input {...register(`args.${i}`)} />
-              </Box>
-            ))}
-        {connected ? (
-          <Button
-            mt="2"
-            variant="outline"
-            isLoading={isSubmitting}
-            type="submit"
-          >
-            Run
-          </Button>
-        ) : (
-          <ConnectWalletModal />
-        )}
-      </FormControl>
-    </form>
-  );
-}
-
-function ConnectWalletModal() {
-  const { connect, wallets } = useWallet();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  return (
-    <>
-      <Button onClick={onOpen} mt="2" variant="outline">
-        Connect Wallet
-      </Button>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Connect Wallet</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Stack>
-              {wallets.map((wallet) => (
-                <Button
-                  key={wallet.name}
-                  onClick={() => connect(wallet.name)}
-                  disabled={wallet.readyState !== "Installed"}
-                >
-                  {wallet.name}
-                </Button>
-              ))}
-            </Stack>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </>
-  );
-}
-
-function getAptosClient(network: string): AptosClient {
-  return new AptosClient(FULLNODES[network]);
-}
-
-function functionSignature(func: Types.MoveFunction): string {
-  return `${func.name}${typeArgPlaceholders(
-    func.generic_type_params.length
-  )}(${func.params.join(", ")})`;
-}
-
-function typeArgPlaceholders(n: number): string {
-  if (n === 0) {
-    return "";
-  }
-  return "<" + Array.from({ length: n }, (_, i) => "T" + i).join(", ") + ">";
 }

@@ -1,0 +1,44 @@
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  Stack,
+  useDisclosure,
+} from "@chakra-ui/react";
+
+export function ConnectWallet() {
+  const { connect, wallets } = useWallet();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  return (
+    <>
+      <Button onClick={onOpen} mt="2" variant="outline">
+        Connect Wallet
+      </Button>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Connect Wallet</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Stack>
+              {wallets.map((wallet) => (
+                <Button
+                  key={wallet.name}
+                  onClick={() => connect(wallet.name)}
+                  disabled={wallet.readyState !== "Installed"}
+                >
+                  {wallet.name}
+                </Button>
+              ))}
+            </Stack>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+}
