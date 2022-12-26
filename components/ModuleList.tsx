@@ -1,4 +1,11 @@
-import { Input, List, ListItem, Heading, Highlight } from "@chakra-ui/react";
+import {
+  Input,
+  List,
+  ListItem,
+  Heading,
+  Highlight,
+  Box,
+} from "@chakra-ui/react";
 import { Types } from "aptos";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -54,7 +61,7 @@ export function ModuleList({ modules }: { modules: Types.MoveModule[] }) {
       />
       <List overflow={"auto"} cursor="pointer" maxHeight="calc(100vh - 200px)">
         {Object.entries(group).map(([moduleName, moduleFuncs]) => (
-          <>
+          <Box key={moduleName}>
             <Heading size="sm" my={3}>
               <Highlight query={[query]} styles={{ bg: "yellow.300" }}>
                 {moduleName}
@@ -88,7 +95,7 @@ export function ModuleList({ modules }: { modules: Types.MoveModule[] }) {
                 </Highlight>
               </ListItem>
             ))}
-          </>
+          </Box>
         ))}
       </List>
     </>
