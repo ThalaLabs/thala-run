@@ -37,11 +37,9 @@ export function Run() {
 
   const { data, error } = useSWR<Types.MoveModuleBytecode>(
     [account, network, module],
-    (account, network, module) =>
+    ([account, network, module]) =>
       getAptosClient(network).getAccountModule(account, module)
   );
-
-  const isLoading = !error && !data;
 
   const moveModule = data?.abi;
   const moveFunc = moveModule?.exposed_functions.find((f) => f.name === func);

@@ -15,13 +15,10 @@ export default function Functions() {
   const { account, network } = watch();
   const accountError = errors?.account;
 
-  const { data, error } = useSWR<Types.MoveModuleBytecode[]>(
+  const { data, error, isLoading } = useSWR<Types.MoveModuleBytecode[]>(
     accountError === undefined ? [account, network] : null,
-    (account, network) => getAptosClient(network).getAccountModules(account)
+    ([account, network]) => getAptosClient(network).getAccountModules(account)
   );
-
-  // TODO: bump swr to get rid of this
-  const isLoading = !error && !data;
 
   const modules = data
     ?.filter((module) => module.abi !== undefined)
