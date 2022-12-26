@@ -16,9 +16,7 @@ export function ConnectWallet() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Button onClick={onOpen} mt="2" variant="outline">
-        Connect Wallet
-      </Button>
+      <Button onClick={onOpen}>Connect Wallet</Button>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>

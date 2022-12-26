@@ -9,53 +9,63 @@ import {
   Input,
   Button,
   Link,
+  Heading,
 } from "@chakra-ui/react";
 import { Types } from "aptos";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { getAptosClient } from "../lib/utils";
+import { SubmitHandler } from "react-hook-form";
+import { functionSignature, getAptosClient } from "../lib/utils";
 import { ConnectWallet } from "./ConnectWallet";
 import NextLink from "next/link";
+import { TxFormType } from "../lib/schema";
+import useSWR from "swr";
+import { useFormContext } from "react-hook-form";
+import TypeArgsInput from "./TypeArgsInput";
+import ArgsInput from "./ArgsInput";
 
-interface IFormInput {
-  typeArgs: string[];
-  args: any[];
-}
-
-export function CallTxForm({
-  network,
-  module,
-  func,
-}: {
-  network: string;
-  module: string;
-  func: Types.MoveFunction;
-}) {
+export function Run() {
   const { connected, signAndSubmitTransaction } = useWallet();
+
   const {
+    watch,
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<IFormInput>({
-    defaultValues: {
-      typeArgs: [],
-      args: [],
-    },
-  });
+    formState: { isSubmitting },
+  } = useFormContext<TxFormType>();
+  const { account, network, module, func } = watch();
 
   const toast = useToast();
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    await onSignAndSubmitTransaction(network, data.typeArgs, data.args);
+  const { data, error } = useSWR<Types.MoveModuleBytecode>(
+    [account, network, module],
+    (account, network, module) =>
+      getAptosClient(network).getAccountModule(account, module)
+  );
+
+  const isLoading = !error && !data;
+
+  const moveModule = data?.abi;
+  const moveFunc = moveModule?.exposed_functions.find((f) => f.name === func);
+
+  const onSubmit: SubmitHandler<TxFormType> = async (data) => {
+    await onSignAndSubmitTransaction(
+      network,
+      module,
+      func,
+      data.typeArgs,
+      data.args
+    );
   };
 
   async function onSignAndSubmitTransaction(
     network: string,
+    module: string,
+    func: string,
     typeArgs: string[],
     args: any[]
   ) {
     const payload: Types.TransactionPayload = {
       type: "entry_function_payload",
-      function: `${module}::${func.name}`,
+      function: `${module}::${func}`,
       type_arguments: typeArgs,
       arguments: args,
     };
@@ -89,29 +99,21 @@ export function CallTxForm({
     }
   }
 
+  if (!account) return <Box></Box>;
+  if (!moveFunc) return <Box>👈 Pick a function to run</Box>;
+
   // TODO: checkout https://chakra-ui.com/getting-started/with-hook-form to add errors handling
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FormControl>
-        {func.generic_type_params.length > 0 &&
-          func.generic_type_params.map((_, i) => (
-            <Box my={2} key={i.toString()}>
-              <FormLabel size="sm">T{i}</FormLabel>
-              <Textarea {...register(`typeArgs.${i}`)} />
-            </Box>
-          ))}
-        {func.params.length > 0 &&
-          !(func.params.length === 1 && func.params[0] === "&signer") &&
-          func.params
-            .filter((param, i) => i !== 0 && param !== "&signer")
-            .map((param, i) => (
-              <Box my={2} key={i.toString()}>
-                <FormLabel>
-                  arg{i}({param})
-                </FormLabel>
-                <Input {...register(`args.${i}`)} />
-              </Box>
-            ))}
+        <Heading size="md">{functionSignature(moveFunc)}</Heading>
+        {moveFunc.generic_type_params.length > 0 && (
+          <TypeArgsInput nTypeArgs={moveFunc.generic_type_params.length} />
+        )}
+        {moveFunc.params.length > 0 &&
+          !(
+            moveFunc.params.length === 1 && moveFunc.params[0] === "&signer"
+          ) && <ArgsInput params={moveFunc.params} />}
         {connected ? (
           <Button
             mt="2"
