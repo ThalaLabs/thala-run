@@ -43,6 +43,7 @@ export function Run() {
   const onSubmit: SubmitHandler<TxFormType> = async (data) => {
     await onSignAndSubmitTransaction(
       network,
+      account,
       module,
       func,
       data.typeArgs,
@@ -52,6 +53,7 @@ export function Run() {
 
   async function onSignAndSubmitTransaction(
     network: string,
+    account: string,
     module: string,
     func: string,
     typeArgs: string[],
@@ -59,7 +61,7 @@ export function Run() {
   ) {
     const payload: Types.TransactionPayload = {
       type: "entry_function_payload",
-      function: `${module}::${func}`,
+      function: `${account}::${module}::${func}`,
       type_arguments: typeArgs,
       arguments: args,
     };
