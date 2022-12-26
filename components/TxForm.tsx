@@ -1,8 +1,8 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Box, Flex, Heading, HStack, Link, SimpleGrid } from "@chakra-ui/react";
-import { DevTool } from "@hookform/devtools";
-import { useFormContext } from "react-hook-form";
-import { TxFormType } from "../lib/schema";
+// import { DevTool } from "@hookform/devtools";
+// import { useFormContext } from "react-hook-form";
+// import { TxFormType } from "../lib/schema";
 import AccountInput from "./AccountInput";
 import Examples from "./Examples";
 import Functions from "./Functions";
@@ -10,7 +10,7 @@ import { Run } from "./Run";
 import SelectNetwork from "./SelectNetwork";
 
 export default function TxForm() {
-  const { control } = useFormContext<TxFormType>();
+  // const { control } = useFormContext<TxFormType>();
   return (
     <Flex h="100vh">
       <Box w="320px" borderRight="1px" borderColor="gray.200" padding="20px">
@@ -39,7 +39,7 @@ export default function TxForm() {
           </Link>
         </HStack>
       </Flex>
-      <DevTool control={control} />
+      {/* <DevTool control={control} /> */}
     </Flex>
   );
 }
