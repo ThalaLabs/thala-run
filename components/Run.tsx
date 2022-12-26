@@ -4,9 +4,6 @@ import {
   Box,
   useToast,
   FormControl,
-  FormLabel,
-  Textarea,
-  Input,
   Button,
   Link,
   Heading,
@@ -27,7 +24,6 @@ export function Run() {
 
   const {
     watch,
-    register,
     handleSubmit,
     formState: { isSubmitting },
   } = useFormContext<TxFormType>();
