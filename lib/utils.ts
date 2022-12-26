@@ -1,4 +1,5 @@
 import { AptosClient, Types } from "aptos";
+import { ParsedUrlQuery } from "querystring";
 
 export const FULLNODES: { [network: string]: string } = {
   devnet: "https://fullnode.devnet.aptoslabs.com",
@@ -14,6 +15,19 @@ export function functionSignature(func: Types.MoveFunction): string {
   return `${func.name}${typeArgPlaceholders(
     func.generic_type_params.length
   )}(${func.params.join(", ")})`;
+}
+
+export function parseArrayParam(
+  query: ParsedUrlQuery,
+  param: string
+): string[] {
+  if (query[param] === undefined) {
+    return [];
+  }
+  if (Array.isArray(query[param])) {
+    return query[param] as string[];
+  }
+  return [query[param] as string];
 }
 
 function typeArgPlaceholders(n: number): string {
