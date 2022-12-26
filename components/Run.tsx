@@ -109,16 +109,11 @@ export function Run() {
             moveFunc.params.length === 1 && moveFunc.params[0] === "&signer"
           ) && <ArgsInput params={moveFunc.params} />}
         {connected ? (
-          <Button
-            mt="2"
-            variant="outline"
-            isLoading={isSubmitting}
-            type="submit"
-          >
+          <Button mt="2" isLoading={isSubmitting} type="submit">
             Run
           </Button>
         ) : (
-          <ConnectWallet />
+          <ConnectWallet mt="2" />
         )}
       </FormControl>
     </form>

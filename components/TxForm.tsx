@@ -21,6 +21,7 @@ export default function TxForm() {
       <Flex flex={1} direction="column">
         <Flex padding={"20px"}>
           <SelectNetwork />
+          <Box w="20px"></Box>
           <AccountInput />
         </Flex>
         <SimpleGrid columns={2} spacing={10} flex={1} padding="20px">
