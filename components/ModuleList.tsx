@@ -79,15 +79,8 @@ export function ModuleList({ modules }: { modules: Types.MoveModule[] }) {
                 onClick={() => {
                   onChangeModule(module.name);
                   onChangeFunc(func.name);
-                  // reset type args and args
-                  [...Array(func.generic_type_params.length)].forEach(
-                    (_, i) => {
-                      resetField(`typeArgs.${i}`);
-                    }
-                  );
-                  [...Array(func.params.length)].forEach((_, i) => {
-                    resetField(`args.${i}`);
-                  });
+                  resetField("typeArgs", {defaultValue: []})
+                  resetField("args", {defaultValue: []})
                 }}
               >
                 <Highlight query={[query]} styles={{ bg: "yellow.300" }}>
