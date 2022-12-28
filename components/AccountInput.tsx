@@ -16,10 +16,10 @@ export default function AccountInput() {
       value={value}
       onChange={(e) => {
         onChange(e.target.value);
-        resetField("typeArgs", {defaultValue: []});
-        resetField("args", {defaultValue: []});
-        resetField("module", {defaultValue: ""});
-        resetField("func", {defaultValue: ""});
+        resetField("typeArgs", { defaultValue: [] });
+        resetField("args", { defaultValue: [] });
+        resetField("module", { defaultValue: "" });
+        resetField("func", { defaultValue: "" });
       }}
     />
   );

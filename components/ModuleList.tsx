@@ -79,8 +79,8 @@ export function ModuleList({ modules }: { modules: Types.MoveModule[] }) {
                 onClick={() => {
                   onChangeModule(module.name);
                   onChangeFunc(func.name);
-                  resetField("typeArgs", {defaultValue: []})
-                  resetField("args", {defaultValue: []})
+                  resetField("typeArgs", { defaultValue: [] });
+                  resetField("args", { defaultValue: [] });
                 }}
               >
                 <Highlight query={[query]} styles={{ bg: "yellow.300" }}>
