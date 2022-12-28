@@ -100,24 +100,26 @@ export function Run() {
 
   // TODO: checkout https://chakra-ui.com/getting-started/with-hook-form to add errors handling
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <FormControl>
-        <Heading size="md">{functionSignature(moveFunc)}</Heading>
-        {moveFunc.generic_type_params.length > 0 && (
-          <TypeArgsInput nTypeArgs={moveFunc.generic_type_params.length} />
-        )}
-        {moveFunc.params.length > 0 &&
-          !(
-            moveFunc.params.length === 1 && moveFunc.params[0] === "&signer"
-          ) && <ArgsInput params={moveFunc.params} />}
-        {connected ? (
-          <Button mt="2" isLoading={isSubmitting} type="submit">
-            Run
-          </Button>
-        ) : (
-          <ConnectWallet mt="2" />
-        )}
-      </FormControl>
-    </form>
+    <Box overflow={"auto"} maxHeight="calc(100vh - 180px)">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FormControl>
+          <Heading size="md">{functionSignature(moveFunc)}</Heading>
+          {moveFunc.generic_type_params.length > 0 && (
+            <TypeArgsInput nTypeArgs={moveFunc.generic_type_params.length} />
+          )}
+          {moveFunc.params.length > 0 &&
+            !(
+              moveFunc.params.length === 1 && moveFunc.params[0] === "&signer"
+            ) && <ArgsInput params={moveFunc.params} />}
+          {connected ? (
+            <Button mt="2" isLoading={isSubmitting} type="submit">
+              Run
+            </Button>
+          ) : (
+            <ConnectWallet mt="2" />
+          )}
+        </FormControl>
+      </form>
+    </Box>
   );
 }
