@@ -8,6 +8,7 @@ import Examples from "./Examples";
 import Functions from "./Functions";
 import { Run } from "./Run";
 import SelectNetwork from "./SelectNetwork";
+import ToggleWallet from "./ToggleWallet";
 
 export default function TxForm() {
   // const { control } = useFormContext<TxFormType>();
@@ -23,6 +24,8 @@ export default function TxForm() {
           <SelectNetwork />
           <Box w="20px"></Box>
           <AccountInput />
+          <Box w="20px"></Box>
+          <ToggleWallet />
         </Flex>
         <SimpleGrid columns={2} spacing={10} flex={1} padding="20px">
           <Run />
