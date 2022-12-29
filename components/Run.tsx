@@ -59,9 +59,11 @@ export function Run() {
     typeArgs: string[],
     args: any[]
   ) {
+    // transaction payload expects account to start with 0x
+    const account0x = account.startsWith("0x") ? account : `0x${account}`;
     const payload: Types.TransactionPayload = {
       type: "entry_function_payload",
-      function: `${account}::${module}::${func}`,
+      function: `${account0x}::${module}::${func}`,
       type_arguments: typeArgs,
       arguments: args,
     };
