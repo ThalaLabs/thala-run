@@ -50,5 +50,12 @@ export default function Functions() {
       </Center>
     );
   }
+  if (modules?.length === 0) {
+    return (
+      <Center h="100px" color="red.500">
+        No module found
+      </Center>
+    );
+  }
   return <ModuleList modules={modules ?? []} />;
 }
