@@ -15,7 +15,7 @@ export default function Home() {
     if (router.isReady) {
       const defaultValues: TxFormType = {
         network: (router.query["network"] || "mainnet") as NetworkType,
-        account: (router.query["account"] || "") as string,
+        account: (router.query["account"] || "0x1") as string,
         module: (router.query["module"] || "") as string,
         func: (router.query["func"] || "") as string,
         typeArgs: parseArrayParam(router.query, "typeArgs"),

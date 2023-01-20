@@ -98,7 +98,8 @@ export function Run() {
   }
 
   if (!account) return <Box></Box>;
-  if (!moveFunc) return <Box>👈 Pick a function to run</Box>;
+  if (!moveFunc)
+    return <Box>👈 Pick a function to run, or 👆 Try a new account</Box>;
 
   // TODO: checkout https://chakra-ui.com/getting-started/with-hook-form to add errors handling
   return (

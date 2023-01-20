@@ -10,7 +10,7 @@ export default function Examples() {
         0x1
       </Link>
       <Spacer />
-      <Link as={NextLink} target="_blank" href="/?account=0x1&network=mainnet">
+      <Link as={NextLink} target="_blank" href="/?account=0x3&network=mainnet">
         0x3
       </Link>
       <Spacer />
