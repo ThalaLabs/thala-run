@@ -5,6 +5,7 @@ import { Box, Flex, Heading, HStack, Link, SimpleGrid } from "@chakra-ui/react";
 // import { TxFormType } from "../lib/schema";
 import AccountInput from "./AccountInput";
 import Examples from "./Examples";
+import Explorer from "./Explorer";
 import Functions from "./Functions";
 import { Run } from "./Run";
 import SelectNetwork from "./SelectNetwork";
@@ -23,6 +24,7 @@ export default function TxForm() {
         <Flex padding={"20px"} gap="20px">
           <SelectNetwork />
           <AccountInput />
+          <Explorer />
           <ToggleWallet />
         </Flex>
         <SimpleGrid columns={2} spacing={10} flex={1} padding="20px">
