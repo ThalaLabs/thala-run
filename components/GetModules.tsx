@@ -16,7 +16,8 @@ export default function GetModules() {
 
   const { data, error, isLoading } = useSWR<Types.MoveModuleBytecode[]>(
     accountError === undefined ? [account, network] : null,
-    ([account, network]) => getAptosClient(network).getAccountModules(account)
+    ([account, network]: string[2]) =>
+      getAptosClient(network).getAccountModules(account)
   );
 
   const modules = data
