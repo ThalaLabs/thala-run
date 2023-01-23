@@ -13,7 +13,7 @@ import { useController } from "react-hook-form";
 import { TxFormType } from "../lib/schema";
 import { groupBy } from "lodash";
 
-export function ModuleList({ modules }: { modules: Types.MoveModule[] }) {
+export function Modules({ modules }: { modules: Types.MoveModule[] }) {
   const { control, resetField } = useFormContext<TxFormType>();
   const {
     field: { value: formFunc, onChange: onChangeFunc },

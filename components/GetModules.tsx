@@ -4,10 +4,9 @@ import { useFormContext } from "react-hook-form";
 import useSWR from "swr";
 import { TxFormType } from "../lib/schema";
 import { getAptosClient } from "../lib/utils";
-import { ModuleList } from "./ModuleList";
+import { Modules } from "./Modules";
 
-// TODO: name Functions and ModuleList differently
-export default function Functions() {
+export default function GetModules() {
   const {
     watch,
     formState: { errors },
@@ -53,9 +52,9 @@ export default function Functions() {
   if (modules?.length === 0) {
     return (
       <Center h="100px" color="red.500">
-        No module found
+        Modules not found
       </Center>
     );
   }
-  return <ModuleList modules={modules ?? []} />;
+  return <Modules modules={modules ?? []} />;
 }

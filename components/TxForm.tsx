@@ -6,7 +6,7 @@ import { Box, Flex, Heading, HStack, Link, SimpleGrid } from "@chakra-ui/react";
 import AccountInput from "./AccountInput";
 import Examples from "./Examples";
 import Explorer from "./Explorer";
-import Functions from "./Functions";
+import GetModules from "./GetModules";
 import { Run } from "./Run";
 import SelectNetwork from "./SelectNetwork";
 import ToggleWallet from "./ToggleWallet";
@@ -18,7 +18,7 @@ export default function TxForm() {
       <Box w="320px" borderRight="1px" borderColor="gray.200" padding="20px">
         <Heading size="lg">thala.run</Heading>
         <Examples />
-        <Functions />
+        <GetModules />
       </Box>
       <Flex flex={1} direction="column">
         <Flex padding={"20px"} gap="20px">
