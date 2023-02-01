@@ -33,7 +33,7 @@ export default function TxForm() {
           <Box></Box>
         </SimpleGrid>
         <HStack spacing="20px" padding="20px" justifyContent={"center"}>
-          <Link href="https://github.com/0xbe1/movetx" isExternal>
+          <Link href="https://github.com/ThalaLabs/thala-run" isExternal>
             GitHub <ExternalLinkIcon mx="2px" />
           </Link>
           <Box>|</Box>
