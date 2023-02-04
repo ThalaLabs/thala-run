@@ -59,13 +59,35 @@ export function Run() {
     typeArgs: string[],
     args: any[]
   ) {
+    if (!moveFunc) return;
+
+    // handle params[0] === "&signer" case
+    let params = moveFunc.params;
+    if (params.length !== args.length) {
+      params = params.slice(1)
+    }
+
+    const handleArrayArgs = params.map((param, i) => {
+      const arg = args[i];
+
+      // if arg matches /vector<*>/ but not /vector<u8>/, split by comma
+      const isVector = param.match(/vector<(.*)>/)
+      if (!isVector) return arg;
+
+      const innerType = isVector[1];
+      if (innerType === "u8") return arg;
+
+      return String(arg).split(",")
+    })
+
     // transaction payload expects account to start with 0x
     const account0x = account.startsWith("0x") ? account : `0x${account}`;
+
     const payload: Types.TransactionPayload = {
       type: "entry_function_payload",
       function: `${account0x}::${module}::${func}`,
       type_arguments: typeArgs,
-      arguments: args,
+      arguments: handleArrayArgs,
     };
     try {
       const { hash } = await signAndSubmitTransaction(payload);
