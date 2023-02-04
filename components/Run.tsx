@@ -8,7 +8,7 @@ import {
   Link,
   Heading,
 } from "@chakra-ui/react";
-import { Types } from "aptos";
+import { HexString, Types } from "aptos";
 import { SubmitHandler } from "react-hook-form";
 import { functionSignature, getAptosClient } from "../lib/utils";
 import { ConnectWallet } from "./ConnectWallet";
@@ -64,26 +64,26 @@ export function Run() {
     // handle params[0] === "&signer" case
     let params = moveFunc.params;
     if (params.length !== args.length) {
-      params = params.slice(1)
+      params = params.slice(1);
     }
 
     const handleArrayArgs = params.map((param, i) => {
       const arg = args[i];
 
       // if arg matches /vector<*>/ but not /vector<u8>/, split by comma
-      const isVector = param.match(/vector<(.*)>/)
+      const isVector = param.match(/vector<(.*)>/);
       if (!isVector) return arg;
 
       const innerType = isVector[1];
-      if (innerType === "u8") return arg;
+      if (innerType === "u8") return new HexString(String(arg)).toUint8Array();
 
-      return String(arg).split(",")
-    })
+      return String(arg).split(",");
+    });
 
     // transaction payload expects account to start with 0x
     const account0x = account.startsWith("0x") ? account : `0x${account}`;
 
-    const payload: Types.TransactionPayload = {
+    const payload: Types.TransactionPayload_EntryFunctionPayload = {
       type: "entry_function_payload",
       function: `${account0x}::${module}::${func}`,
       type_arguments: typeArgs,
