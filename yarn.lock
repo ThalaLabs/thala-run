@@ -2239,10 +2239,10 @@ form-data@4.0.0, form-data@^4.0.0:
     combined-stream "^1.0.8"
     mime-types "^2.1.12"
 
-framer-motion@^8:
-  version "8.5.4"
-  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-8.5.4.tgz#aa6d88f2af8d7aa1b58ca8e53b7ccce0d8c4089b"
-  integrity sha512-xBVovXUIdpKvRvIPsrSTiyXZUYyct9zarzdVeyzv+V6DFsDpHIuppyOjDO8VM1fBspDn+rUU4ZFZ5yJxLmzebQ==
+framer-motion@^9:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/framer-motion/-/framer-motion-9.0.1.tgz#0b63c22bdde1c38ce8da88141bb81ef0137c68e9"
+  integrity sha512-0EP7+b/hnsbrFOum9zU+23Fq2cJJrLOqv/yJ26fIzK4CC33ZAjXZGi1/XyblbgnUF0cxZ/SEDj5IYHeQo42qNg==
   dependencies:
     "@motionone/dom" "^10.15.3"
     hey-listen "^1.0.8"
