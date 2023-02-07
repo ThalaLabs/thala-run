@@ -12,20 +12,29 @@ interface IArgumentInputProps {
 export default function ArgumentInput({ arg, index }: IArgumentInputProps) {
   const { register, getValues, setValue } = useFormContext<TxFormType>();
   const value = getValues().args[index];
-  const [items, setItems] = useState<Array<string>>(value.split(","));
+  const [items, setItems] = useState<Array<string>>(value?.split(",") || []);
   const [newItem, setNewItem] = useState("");
 
   useEffect(() => {
     const args = getValues().args;
-    setValue(
-      "args",
-      args.map((argument, idx) => {
-        if (index === idx) {
+    let newArgs = args.map((argument, idx) => {
+      if (index === idx) {
+        return items.join(",");
+      }
+      return argument;
+    });
+    if (args.length < index + 1) {
+      newArgs = new Array(index + 1).fill(0).map((item, i) => {
+        if (i < args.length) {
+          return args[i];
+        }
+        if (i === index) {
           return items.join(",");
         }
-        return argument;
-      })
-    );
+        return "";
+      });
+    }
+    setValue("args", newArgs);
   }, [items, index]);
 
   const handleChangeNewItem = (e: ChangeEvent<HTMLInputElement>) => {
