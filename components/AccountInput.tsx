@@ -4,12 +4,14 @@ import { TxFormType } from "../lib/schema";
 
 export default function AccountInput() {
   const { control, resetField } = useFormContext<TxFormType>();
+
   const {
     field: { value, onChange },
   } = useController({
     name: "account",
     control,
   });
+
   return (
     <Input
       flex={1}
