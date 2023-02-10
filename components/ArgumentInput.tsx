@@ -72,23 +72,28 @@ export default function ArgumentInput({ arg, index }: IArgumentInputProps) {
             <Input
               key={`item-${i}`}
               value={item}
-              mr={2}
+              size="sm"
               onChange={(e) => handleChangeItem(e, i)}
             />
-            <IconButton
-              aria-label="remove-argument"
-              size="xs"
-              icon={<CloseIcon />}
-              variant={"outline"}
-              onClick={() => handleRemoveItem(i)}
-            />
+            <Box width={"80px"}>
+              <IconButton
+                aria-label="remove-argument"
+                size="xs"
+                icon={<CloseIcon />}
+                variant={"outline"}
+                ml={2}
+                onClick={() => handleRemoveItem(i)}
+              />
+            </Box>
           </Box>
         ))}
         <Box display={"flex"}>
           <Input value={newItem} onChange={handleChangeNewItem} />
-          <Button ml={2} onClick={handleAddItem}>
-            Add
-          </Button>
+          <Box width={"80px"}>
+            <Button ml={2} onClick={handleAddItem}>
+              Add
+            </Button>
+          </Box>
         </Box>
       </Box>
     );
