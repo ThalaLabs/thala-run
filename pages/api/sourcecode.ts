@@ -1,7 +1,7 @@
 import { HexString } from "aptos";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAptosClient } from "../../lib/utils";
-import pako from "pako";
+import { gunzipSync } from 'zlib';
 
 type PackageMetadata = {
   name: string;
@@ -40,6 +40,6 @@ async function getSourceCode(
     });
 
   const codeBytes = new HexString(codeHex).toUint8Array();
-  const codeString = pako.ungzip(codeBytes, { to: "string" });
+  const codeString = gunzipSync(codeBytes).toString();
   return codeString;
 }
