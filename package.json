@@ -15,7 +15,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@hookform/resolvers": "^2.9.10",
-    "@martianwallet/aptos-wallet-adapter": "^0.0.2",
+    "@martianwallet/aptos-wallet-adapter": "^0.0.3",
     "@pontem/wallet-adapter-plugin": "^0.1.4",
     "@types/node": "18.11.18",
     "@types/react": "18.0.27",
