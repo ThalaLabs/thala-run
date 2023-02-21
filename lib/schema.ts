@@ -4,13 +4,7 @@ export const NetworkEnum = z.enum(["devnet", "testnet", "mainnet"]);
 
 export const TxFormSchema = z.object({
   network: NetworkEnum,
-  account: z.union([
-    z.string().regex(/(0[xX])?[0-9a-fA-F]{64}/),
-    z.literal("0x1"),
-    z.literal("0X1"),
-    z.literal("0x3"),
-    z.literal("0X3"),
-  ]),
+  account: z.string().regex(/(0[xX])?[0-9a-fA-F]{1,64}/),
   module: z.string(),
   func: z.string(),
   typeArgs: z.string().array(),
