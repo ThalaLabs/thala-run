@@ -1,14 +1,12 @@
-import { Box, FormLabel, Input, Textarea } from "@chakra-ui/react";
-import { useFormContext } from "react-hook-form";
-import { TxFormType } from "../lib/schema";
+import { Box, FormLabel } from "@chakra-ui/react";
+import ArgumentInput from "./ArgumentInput";
 
 export default function TypeArgsInput({ params }: { params: string[] }) {
-  const { register } = useFormContext<TxFormType>();
-
   let args = params;
   if (args[0] === "&signer") {
     args = args.slice(1);
   }
+
   return (
     <>
       {args.map((arg, i) => (
@@ -16,11 +14,7 @@ export default function TypeArgsInput({ params }: { params: string[] }) {
           <FormLabel>
             arg{i}: {arg}
           </FormLabel>
-          {arg === "address" ? (
-            <Textarea {...register(`args.${i}`)} />
-          ) : (
-            <Input {...register(`args.${i}`)} />
-          )}
+          <ArgumentInput arg={arg} index={i} />
         </Box>
       ))}
     </>
