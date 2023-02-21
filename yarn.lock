@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@aptos-labs/wallet-adapter-core@*", "@aptos-labs/wallet-adapter-core@^0.2.0":
+"@aptos-labs/wallet-adapter-core@*", "@aptos-labs/wallet-adapter-core@0.2.3", "@aptos-labs/wallet-adapter-core@^0.2.0":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@aptos-labs/wallet-adapter-core/-/wallet-adapter-core-0.2.3.tgz#916807716242333d3e098f4704c8494244723a81"
   integrity sha512-QjUVRYSL05pxdjYo2bScxEZ8wi6ww4sf5mBW5w89F5mDfnDz2XEmZQYfQtV3bxoyqnNWPEjagTds4tKMXDhF1w==
@@ -1058,12 +1058,12 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@martianwallet/aptos-wallet-adapter@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@martianwallet/aptos-wallet-adapter/-/aptos-wallet-adapter-0.0.2.tgz#563069a72fb7f58e34ac52c48d8f738b7db04241"
-  integrity sha512-hKM0zPfw63XRDqeIhaysoR5D9d+oF2oXmN/mkJPQ9oM714MYrx3AhmG1xIJKJe5t6JOrkI8r+wpPgYfTVy8uhg==
+"@martianwallet/aptos-wallet-adapter@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@martianwallet/aptos-wallet-adapter/-/aptos-wallet-adapter-0.0.3.tgz#336e6ac3c4981a75293c8d25573cdf5de573f984"
+  integrity sha512-hR/KhXOeDv6tLGt+BAoJyGEhXKHevPEEw/7Z6hsyNTerHRrplguD7CLMbEY6cCakwzMqfV9+GxyZ+OYQsQ6mgg==
   dependencies:
-    "@aptos-labs/wallet-adapter-core" "0.1.7"
+    "@aptos-labs/wallet-adapter-core" "0.2.3"
     aptos "^1.4.0"
 
 "@motionone/animation@^10.15.1":
