@@ -20,10 +20,10 @@
     aptos "^1.3.17"
     eventemitter3 "^4.0.7"
 
-"@aptos-labs/wallet-adapter-react@^0.2.3":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@aptos-labs/wallet-adapter-react/-/wallet-adapter-react-0.2.3.tgz#bf80fc0a1208f5499317ddc1fffedc321f9cc0f1"
-  integrity sha512-m6y1ndIweOu4/1oMe0EkKjNtd3mRhCuwax31hZlFQi4jTMvvlQHy2gyA1pVQtHGJvCo60EHEfltkKdgvT1Jmhg==
+"@aptos-labs/wallet-adapter-react@^0.2.4":
+  version "0.2.4"
+  resolved "https://registry.yarnpkg.com/@aptos-labs/wallet-adapter-react/-/wallet-adapter-react-0.2.4.tgz#fc625d91d4e35378e37be3bc4ff5012eabf9d32c"
+  integrity sha512-lQWTrLPCEOw9TeR1CGUoKT3OTP5tmF9x4t3Rl/k1az0hOb3etjlNt9qbe/k+GP0RujAHc7o4mISzyEjZHOPcZg==
   dependencies:
     "@aptos-labs/wallet-adapter-core" "*"
     aptos "^1.3.17"

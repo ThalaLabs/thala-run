@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aptos-labs/wallet-adapter-react": "^0.2.3",
+    "@aptos-labs/wallet-adapter-react": "^0.2.4",
     "@chakra-ui/icons": "^2.0.17",
     "@chakra-ui/react": "^2.4.8",
     "@emotion/react": "^11",
