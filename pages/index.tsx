@@ -23,6 +23,8 @@ export default function Home() {
       };
       setDefaultValues(defaultValues);
     }
+
+    return () => router.push("https://www.thala.dev/run");
   }, [router.isReady]);
 
   if (!defaultValues) {
