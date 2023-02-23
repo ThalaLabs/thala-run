@@ -11,7 +11,6 @@ export default function Home() {
   const [defaultValues, setDefaultValues] = useState<TxFormType>();
 
   useEffect(() => {
-    // console.log("root useEffect", router.isReady)
     if (router.isReady) {
       const defaultValues: TxFormType = {
         network: (router.query["network"] || "mainnet") as NetworkType,
