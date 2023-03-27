@@ -24,7 +24,7 @@
     "aptos": "^1.5.0",
     "eslint": "8.35.0",
     "eslint-config-next": "13.2.1",
-    "framer-motion": "^9",
+    "framer-motion": "^10",
     "lodash": "^4.17.21",
     "msafe-plugin-wallet-adapter": "^0.1.0",
     "next": "13.1.2",
