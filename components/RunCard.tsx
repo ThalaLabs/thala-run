@@ -8,6 +8,8 @@ import {
   Link,
   Heading,
   Spinner,
+  HStack,
+  Spacer,
 } from "@chakra-ui/react";
 import { HexString, Types } from "aptos";
 import { SubmitHandler } from "react-hook-form";
@@ -144,7 +146,18 @@ export function RunCard({ id }: { id: string }) {
     <Box backgroundColor={"gray.50"} p={8} h={"fit-content"} rounded="2xl" shadow={"md"}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl>
-          <Heading size="md">{functionSignature(moveFunc)}</Heading>
+          <HStack>
+            <Heading size="md">{functionSignature(moveFunc)}</Heading>
+            <Spacer />
+            <Button onClick={
+              () => {
+                if (!context) return;
+                const idx = context.funcGroup.findIndex((x) => x.id === id);
+                context.funcGroup.splice(idx, 1);
+                context.setFuncGroup(context.funcGroup.slice());
+              }
+            }>Remove</Button>
+          </HStack>
           {moveFunc.generic_type_params.length > 0 && (
             <TypeArgsInput nTypeArgs={moveFunc.generic_type_params.length} />
           )}
@@ -161,6 +174,6 @@ export function RunCard({ id }: { id: string }) {
           )}
         </FormControl>
       </form>
-    </Box>
+    </Box >
   );
 }

@@ -6,19 +6,23 @@ export const GenerateLinkButton = () => {
     const context = useContext(FuncGroupContext);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { onCopy, value, setValue, hasCopied } = useClipboard("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     return <>
         <Button
             position={"fixed"}
             bottom={4}
             right={4}
+            isLoading={isSubmitting}
             onClick={async () => {
+                setIsSubmitting(true);
                 if (!context) return;
                 const response = await fetch("/api/generate-link", {
                     method: "POST",
                     body: JSON.stringify(context.funcGroup),
                 });
                 const id = await response.json();
+                setIsSubmitting(false);
                 setValue(
                     `${window.location.origin + window.location.pathname}?id=${id}`
                 );
@@ -34,12 +38,12 @@ export const GenerateLinkButton = () => {
                         <Input
                             value={value}
                             mr={2}
+                            readOnly
                         />
                         <Button onClick={onCopy}>{hasCopied ? "Copied!" : "Copy"}</Button>
                     </HStack>
                 </ModalBody>
             </ModalContent>
-
         </Modal>
     </>
 }
