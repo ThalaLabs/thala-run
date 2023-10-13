@@ -21,17 +21,17 @@ export default function TxFormProvider({
   const router = useRouter();
 
   useEffect(() => {
-    const subscription = watch(async (value) => {
-      await router.push(
-        {
-          pathname: "/",
-          query: value as TxFormType,
-        },
-        undefined,
-        { shallow: true }
-      );
-    });
-    return () => subscription.unsubscribe();
+    // const subscription = watch(async (value) => {
+    //   await router.push(
+    //     {
+    //       pathname: "/",
+    //       query: value as TxFormType,
+    //     },
+    //     undefined,
+    //     { shallow: true }
+    //   );
+    // });
+    // return () => subscription.unsubscribe();
   }, [watch]);
 
   return <FormProvider {...form}>{children}</FormProvider>;
