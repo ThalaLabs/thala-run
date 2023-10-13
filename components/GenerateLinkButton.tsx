@@ -20,9 +20,7 @@ export const GenerateLinkButton = () => {
                 });
                 const id = await response.json();
                 setValue(
-                    window.location.hostname.includes("localhost") ?
-                        `http://localhost:3000?id=${id}` :
-                        `https://www.thala.dev/run?id=${id}`
+                    `${window.location.origin + window.location.pathname}?id=${id}`
                 );
                 onOpen();
             }}>Generate Link</Button>
