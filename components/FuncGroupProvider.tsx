@@ -8,24 +8,29 @@ export type FuncGroupItem = {
 
 export const FuncGroupContext = createContext<{
     funcGroup: FuncGroupItem[],
-    setFuncGroup: (funcGroup: FuncGroupItem[]) => void
+    setFuncGroup: (funcGroup: FuncGroupItem[]) => void,
+    scrollToTop: () => void,
+    setScrollToTop: (func: () => void) => void,
 } | undefined>({
     funcGroup: [],
-    setFuncGroup: () => { }
+    setFuncGroup: () => { },
+    scrollToTop: () => { },
+    setScrollToTop: () => { },
 });
 
 export const FuncGroupProvider = ({ children }: {
     children: React.ReactNode
 }) => {
     const [funcGroup, setFuncGroup] = useState<FuncGroupItem[]>([]);
+    const [scrollToTop, setScrollToTop] = useState(() => () => { });
     const id = useRouter().query["id"] as string;
 
     // sync data from url
     useEffect(() => {
         if (!id) return;
-        
+
         const func = async () => {
-            const res = await fetch("/api/get-link?id=" + id);    
+            const res = await fetch("/api/get-link?id=" + id);
             setFuncGroup(await res.json());
         }
 
@@ -34,7 +39,9 @@ export const FuncGroupProvider = ({ children }: {
 
     return <FuncGroupContext.Provider value={{
         funcGroup,
-        setFuncGroup
+        setFuncGroup,
+        scrollToTop,
+        setScrollToTop
     }}>
         {children}
     </FuncGroupContext.Provider>

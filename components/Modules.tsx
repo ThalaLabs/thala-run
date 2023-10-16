@@ -99,6 +99,7 @@ export function Modules({ modules, account, network }: {
                         args: [],
                       },
                     ]);
+                    context.scrollToTop();
                   }
                   else {
                     onChangeModule(module.name);
