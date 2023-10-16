@@ -13,16 +13,17 @@ import {
 } from "@chakra-ui/react";
 import { HexString, Types } from "aptos";
 import { SubmitHandler } from "react-hook-form";
-import { functionSignature, getAptosClient } from "../lib/utils";
+import { getAptosClient } from "../lib/utils";
 import { ConnectWallet } from "./ConnectWallet";
 import NextLink from "next/link";
 import { TxFormType } from "../lib/schema";
-import useSWR, { unstable_serialize } from "swr";
+import useSWR from "swr";
 import { useFormContext } from "react-hook-form";
 import TypeArgsInput from "./TypeArgsInput";
 import ArgsInput from "./ArgsInput";
 import { useContext, useEffect } from "react";
 import { FuncGroupContext } from "./FuncGroupProvider";
+import { walletAddressEllipsis } from "../functions/walletAddressEllipsis";
 
 export function RunCard({ id }: { id: string }) {
   const { connected, signAndSubmitTransaction } = useWallet();
@@ -147,7 +148,7 @@ export function RunCard({ id }: { id: string }) {
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl>
           <HStack>
-            <Heading size="md">{functionSignature(moveFunc)}</Heading>
+            <Heading size="sm">{walletAddressEllipsis(values.account)}::{values.module}::{moveFunc.name}</Heading>
             <Spacer />
             <Button onClick={
               () => {
