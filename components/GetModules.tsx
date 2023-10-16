@@ -57,5 +57,5 @@ export default function GetModules() {
       </Center>
     );
   }
-  return <Modules modules={modules ?? []} />;
+  return <Modules modules={modules ?? []} account={account} network={network} />;
 }

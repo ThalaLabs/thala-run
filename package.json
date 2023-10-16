@@ -20,7 +20,9 @@
     "@types/node": "18.14.2",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.9",
+    "@types/uuid": "^9.0.5",
     "@vercel/analytics": "^0.1.8",
+    "@vercel/kv": "^0.2.3",
     "aptos": "^1.5.0",
     "eslint": "8.35.0",
     "eslint-config-next": "13.2.1",
@@ -34,6 +36,7 @@
     "react-hook-form": "^7.43.1",
     "swr": "^2.0.4",
     "typescript": "4.9.4",
+    "uuid": "^9.0.1",
     "zod": "^3.20.6"
   },
   "devDependencies": {

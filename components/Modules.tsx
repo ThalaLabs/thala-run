@@ -7,13 +7,19 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { Types } from "aptos";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { useController } from "react-hook-form";
-import { TxFormType } from "../lib/schema";
+import { NetworkType, TxFormType } from "../lib/schema";
 import { groupBy } from "lodash";
+import { FuncGroupContext } from "./FuncGroupProvider";
+import { v4 as uuid } from 'uuid';
 
-export function Modules({ modules }: { modules: Types.MoveModule[] }) {
+export function Modules({ modules, account, network }: {
+  modules: Types.MoveModule[],
+  account: string,
+  network: NetworkType,
+}) {
   const { control, resetField } = useFormContext<TxFormType>();
   const {
     field: { value: formFunc, onChange: onChangeFunc },
@@ -51,6 +57,8 @@ export function Modules({ modules }: { modules: Types.MoveModule[] }) {
 
   const group = groupBy(moduleFuncs, (moduleFunc) => moduleFunc.module.name);
 
+  const context = useContext(FuncGroupContext);
+
   return (
     <>
       <Input
@@ -77,10 +85,28 @@ export function Modules({ modules }: { modules: Types.MoveModule[] }) {
                     : undefined
                 }
                 onClick={() => {
-                  onChangeModule(module.name);
-                  onChangeFunc(func.name);
-                  resetField("typeArgs", { defaultValue: [] });
-                  resetField("args", { defaultValue: [] });
+                  // advance mode
+                  if (context) {
+                    context.setFuncGroup([
+                      ...context.funcGroup,
+                      {
+                        id: uuid(),
+                        account: account,
+                        network: network,
+                        module: module.name,
+                        func: func.name,
+                        typeArgs: [],
+                        args: [],
+                      },
+                    ]);
+                    context.scrollToTop();
+                  }
+                  else {
+                    onChangeModule(module.name);
+                    onChangeFunc(func.name);
+                    resetField("typeArgs", { defaultValue: [] });
+                    resetField("args", { defaultValue: [] });
+                  }
                 }}
               >
                 <Highlight query={[query]} styles={{ bg: "yellow.300" }}>
