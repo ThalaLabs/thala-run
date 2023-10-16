@@ -35,7 +35,7 @@ export const FuncGroupProvider = ({ children }: {
         }
 
         func();
-    }, []);
+    }, [id]);
 
     return <FuncGroupContext.Provider value={{
         funcGroup,

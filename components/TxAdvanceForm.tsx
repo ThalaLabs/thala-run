@@ -1,6 +1,6 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Box, Flex, Heading, HStack, Link, SimpleGrid, Stack } from "@chakra-ui/react";
-import { use, useContext, useEffect, useRef } from "react";
+import { Box, Flex, Heading, HStack, Link, Stack } from "@chakra-ui/react";
+import { useContext, useEffect, useRef } from "react";
 import AccountInput from "./AccountInput";
 import Examples from "./Examples";
 import Explorer from "./Explorer";
@@ -19,7 +19,10 @@ export default function TxAdvanceForm() {
     context?.setScrollToTop(() => () =>
       ref.current?.scrollTo({ top: 0, behavior: 'smooth' })
     );
-  }, [context, ref.current]);
+    
+    // context?.setScrollToTop is enough here, use context as dependency will cause infinite loop 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [context?.setScrollToTop, ref.current]);
 
   return (
     <Flex h="100vh">

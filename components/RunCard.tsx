@@ -1,5 +1,5 @@
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { ArrowDownIcon, ArrowUpIcon, ExternalLinkIcon, SmallCloseIcon } from "@chakra-ui/icons";
 import {
   Box,
   useToast,
@@ -37,6 +37,8 @@ export function RunCard({ id }: { id: string }) {
   const { account, network, module, func, typeArgs, args } = watch();
   const values = watch();
 
+  const serializedTypeArgs = JSON.stringify(typeArgs);
+  const serializedArgs = JSON.stringify(args);
   useEffect(() => {
     if (!context) return;
     const idx = context.funcGroup.findIndex((x) => x.id === id);
@@ -46,7 +48,7 @@ export function RunCard({ id }: { id: string }) {
     }
     context?.setFuncGroup(context.funcGroup.slice());
   },
-    [JSON.stringify(typeArgs), JSON.stringify(args)]);
+    [serializedTypeArgs, serializedArgs, context, id, values]);
 
   const toast = useToast();
 
@@ -153,11 +155,37 @@ export function RunCard({ id }: { id: string }) {
             <Button onClick={
               () => {
                 if (!context) return;
-                const idx = context.funcGroup.findIndex((x) => x.id === id);
-                context.funcGroup.splice(idx, 1);
-                context.setFuncGroup(context.funcGroup.slice());
+                const group = context.funcGroup.slice()
+                const idx = group.findIndex((x) => x.id === id);
+                if (idx + 1 >= group.length) return;
+
+                [group[idx], group[idx + 1]] = [group[idx + 1], group[idx]]
+                context.setFuncGroup(group);
               }
-            }>Remove</Button>
+            }><ArrowUpIcon />
+            </Button>
+            <Button onClick={
+              () => {
+                if (!context) return;
+                const group = context.funcGroup.slice()
+                const idx = group.findIndex((x) => x.id === id);
+                if (idx - 1 < 0) return;
+
+                [group[idx], group[idx - 1]] = [group[idx - 1], group[idx]]
+                context.setFuncGroup(group);
+              }
+            }><ArrowDownIcon />
+            </Button>
+            <Button onClick={
+              () => {
+                if (!context) return;
+                const group = context.funcGroup.slice()
+                const idx = group.findIndex((x) => x.id === id);
+                group.splice(idx, 1);
+                context.setFuncGroup(group);
+              }
+            }><SmallCloseIcon />
+            </Button>
           </HStack>
           {moveFunc.generic_type_params.length > 0 && (
             <TypeArgsInput nTypeArgs={moveFunc.generic_type_params.length} />

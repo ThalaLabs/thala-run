@@ -24,7 +24,7 @@ export default function Home() {
             };
             setDefaultValues(defaultValues);
         }
-    }, [router.isReady]);
+    }, [router.isReady, router.query]);
 
     if (!defaultValues) {
         return;
