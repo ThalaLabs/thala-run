@@ -10,6 +10,7 @@ import {
   Spinner,
   HStack,
   Spacer,
+  Text
 } from "@chakra-ui/react";
 import { HexString, Types } from "aptos";
 import { SubmitHandler } from "react-hook-form";
@@ -21,13 +22,14 @@ import useSWR from "swr";
 import { useFormContext } from "react-hook-form";
 import TypeArgsInput from "./TypeArgsInput";
 import ArgsInput from "./ArgsInput";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FuncGroupContext } from "./FuncGroupProvider";
 import { walletAddressEllipsis } from "../functions/walletAddressEllipsis";
 
 export function RunCard({ id }: { id: string }) {
   const { connected, signAndSubmitTransaction } = useWallet();
   const context = useContext(FuncGroupContext);
+  const [executionResult, setExecutionResult] = useState<string>();
 
   const {
     watch,
@@ -48,7 +50,7 @@ export function RunCard({ id }: { id: string }) {
     }
     context?.setFuncGroup(context.funcGroup.slice());
   },
-    [serializedTypeArgs, serializedArgs, context, id, values]);
+    [serializedTypeArgs, serializedArgs, id]);
 
   const toast = useToast();
 
@@ -113,12 +115,16 @@ export function RunCard({ id }: { id: string }) {
     try {
       const { hash } = await signAndSubmitTransaction(payload);
       await getAptosClient(network).waitForTransaction(hash);
+
+      const href = `https://explorer.aptoslabs.com/txn/${hash}?network=${network}`;
+      setExecutionResult(hash);
+
       toast({
         title: "Transaction submitted.",
         description: (
           <Link
             as={NextLink}
-            href={`https://explorer.aptoslabs.com/txn/${hash}?network=${network}`}
+            href={href}
             isExternal
           >
             View on explorer <ExternalLinkIcon mx="2px" />
@@ -129,6 +135,7 @@ export function RunCard({ id }: { id: string }) {
         isClosable: true,
       });
     } catch (error: any) {
+      setExecutionResult(undefined);
       console.log("error", error);
       toast({
         title: "An error occurred.",
@@ -201,6 +208,18 @@ export function RunCard({ id }: { id: string }) {
           ) : (
             <ConnectWallet mt="2" />
           )}
+
+          {executionResult && <Box mt={4}>
+            <Text>Transaction:
+              <Link
+                isExternal
+                ml={2}
+                color="blue.600"
+                href={`https://explorer.aptoslabs.com/txn/${executionResult}?network=${network}`}>{executionResult}
+              </Link>
+            </Text>
+          </Box>}
+
         </FormControl>
       </form>
     </Box >
