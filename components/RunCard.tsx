@@ -1,8 +1,7 @@
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import { ArrowDownIcon, ArrowUpIcon, ExternalLinkIcon, SmallCloseIcon } from "@chakra-ui/icons";
+import { ArrowDownIcon, ArrowUpIcon, SmallCloseIcon } from "@chakra-ui/icons";
 import {
   Box,
-  useToast,
   FormControl,
   Button,
   Link,
@@ -10,32 +9,27 @@ import {
   Spinner,
   HStack,
   Spacer,
-  Text
+  Text,
+  Tag
 } from "@chakra-ui/react";
-import { HexString, Types } from "aptos";
-import { SubmitHandler } from "react-hook-form";
-import { getAptosClient } from "../lib/utils";
 import { ConnectWallet } from "./ConnectWallet";
-import NextLink from "next/link";
-import { TxFormType } from "../lib/schema";
-import useSWR from "swr";
-import { useFormContext } from "react-hook-form";
 import TypeArgsInput from "./TypeArgsInput";
 import ArgsInput from "./ArgsInput";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { FuncGroupContext } from "./FuncGroupProvider";
 import { walletAddressEllipsis } from "../functions/walletAddressEllipsis";
+import { useFunctionSubmit } from "../hooks/useFunctionSubmit";
 
 export function RunCard({ id }: { id: string }) {
-  const { connected, signAndSubmitTransaction } = useWallet();
+  const { connected } = useWallet();
   const context = useContext(FuncGroupContext);
-  const [executionResult, setExecutionResult] = useState<string>();
-
   const {
     watch,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useFormContext<TxFormType>();
+    moveFunc,
+    onSubmit,
+    executionResult,
+    isSubmitting } = useFunctionSubmit();
+
   const { account, network, module, func, typeArgs, args } = watch();
   const values = watch();
 
@@ -51,102 +45,6 @@ export function RunCard({ id }: { id: string }) {
     context?.setFuncGroup(context.funcGroup.slice());
   },
     [serializedTypeArgs, serializedArgs, id]);
-
-  const toast = useToast();
-
-  const { data, error } = useSWR<Types.MoveModuleBytecode>(
-    [account, network, module],
-    ([account, network, module]: string[3]) =>
-      getAptosClient(network).getAccountModule(account, module)
-  );
-
-  const moveModule = data?.abi;
-  const moveFunc = moveModule?.exposed_functions.find((f) => f.name === func);
-
-  const onSubmit: SubmitHandler<TxFormType> = async (data) => {
-    await onSignAndSubmitTransaction(
-      network,
-      account,
-      module,
-      func,
-      data.typeArgs,
-      data.args
-    );
-  };
-
-  async function onSignAndSubmitTransaction(
-    network: string,
-    account: string,
-    module: string,
-    func: string,
-    typeArgs: string[],
-    args: any[]
-  ) {
-    if (!moveFunc) return;
-
-    // handle params[0] === "&signer" case
-    let params = moveFunc.params;
-    if (params.length !== args.length) {
-      params = params.slice(1);
-    }
-
-    const handleArrayArgs = params.map((param, i) => {
-      const arg = args[i];
-
-      // if arg matches /vector<*>/ but not /vector<u8>/, split by comma
-      const isVector = param.match(/vector<(.*)>/);
-      if (!isVector) return arg;
-
-      const innerType = isVector[1];
-      if (innerType === "u8") return new HexString(String(arg)).toUint8Array();
-
-      return String(arg).split(",");
-    });
-
-    // transaction payload expects account to start with 0x
-    const account0x = account.startsWith("0x") ? account : `0x${account}`;
-
-    const payload: Types.TransactionPayload_EntryFunctionPayload = {
-      type: "entry_function_payload",
-      function: `${account0x}::${module}::${func}`,
-      type_arguments: typeArgs,
-      arguments: handleArrayArgs,
-    };
-    try {
-      const { hash } = await signAndSubmitTransaction(payload);
-      await getAptosClient(network).waitForTransaction(hash);
-
-      const href = `https://explorer.aptoslabs.com/txn/${hash}?network=${network}`;
-      setExecutionResult(hash);
-
-      toast({
-        title: "Transaction submitted.",
-        description: (
-          <Link
-            as={NextLink}
-            href={href}
-            isExternal
-          >
-            View on explorer <ExternalLinkIcon mx="2px" />
-          </Link>
-        ),
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-    } catch (error: any) {
-      setExecutionResult(undefined);
-      console.log("error", error);
-      toast({
-        title: "An error occurred.",
-        description: error.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  }
-
   if (!account) return <Box></Box>;
   if (!moveFunc)
     return <Spinner />;
@@ -154,10 +52,13 @@ export function RunCard({ id }: { id: string }) {
   // TODO: checkout https://chakra-ui.com/getting-started/with-hook-form to add errors handling
   return (
     <Box backgroundColor={"gray.50"} p={8} h={"fit-content"} rounded="2xl" shadow={"md"}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         <FormControl>
           <HStack>
-            <Heading size="sm">{walletAddressEllipsis(values.account)}::{values.module}::{moveFunc.name}</Heading>
+            <Heading size="sm">
+              {walletAddressEllipsis(values.account)}::{values.module}::{moveFunc.name}
+              <Tag ml={2} size="sm" colorScheme="blue">{moveFunc.is_entry ? "entry" : "view"}</Tag>
+            </Heading>
             <Spacer />
             <Button onClick={
               () => {
@@ -210,14 +111,18 @@ export function RunCard({ id }: { id: string }) {
           )}
 
           {executionResult && <Box mt={4}>
-            <Text>Transaction:
-              <Link
-                isExternal
-                ml={2}
-                color="blue.600"
-                href={`https://explorer.aptoslabs.com/txn/${executionResult}?network=${network}`}>{executionResult}
-              </Link>
-            </Text>
+            {
+              moveFunc.is_entry ?
+                <Text>Transaction:
+                  <Link
+                    isExternal
+                    ml={2}
+                    color="blue.600"
+                    href={`https://explorer.aptoslabs.com/txn/${executionResult}?network=${network}`}>{executionResult}
+                  </Link>
+                </Text> :
+                <Text>Result: {executionResult}</Text>
+            }
           </Box>}
 
         </FormControl>
@@ -225,3 +130,4 @@ export function RunCard({ id }: { id: string }) {
     </Box >
   );
 }
+

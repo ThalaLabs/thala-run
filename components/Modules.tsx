@@ -5,6 +5,8 @@ import {
   Heading,
   Highlight,
   Box,
+  HStack,
+  Select,
 } from "@chakra-ui/react";
 import { Types } from "aptos";
 import { useContext, useState } from "react";
@@ -14,6 +16,8 @@ import { NetworkType, TxFormType } from "../lib/schema";
 import { groupBy } from "lodash";
 import { FuncGroupContext } from "./FuncGroupProvider";
 import { v4 as uuid } from 'uuid';
+import { SearchIcon } from "@chakra-ui/icons";
+import { BiFilterAlt } from "react-icons/bi";
 
 export function Modules({ modules, account, network }: {
   modules: Types.MoveModule[],
@@ -40,7 +44,6 @@ export function Modules({ modules, account, network }: {
 
   let moduleFuncs = modules.flatMap((module) =>
     module.exposed_functions
-      .filter((func) => func.is_entry)
       .map((func) => {
         return { module, func };
       })
@@ -61,12 +64,24 @@ export function Modules({ modules, account, network }: {
 
   return (
     <>
-      <Input
-        type="search"
-        placeholder="search..."
-        onChange={(e) => setQuery(e.target.value)}
-        my={2}
-      />
+      <HStack mb={2}>
+        <BiFilterAlt />
+        <Select placeholder='All'>
+          <option value='view'>View</option>
+          <option value='entry'>Entry</option>
+        </Select>
+      </HStack>
+
+      <HStack>
+        <SearchIcon />
+        <Input
+          type="search"
+          placeholder="search..."
+          onChange={(e) => setQuery(e.target.value)}
+          my={2}
+        />
+      </HStack>
+
       <List overflow={"auto"} cursor="pointer" maxHeight="calc(100vh - 200px)">
         {Object.entries(group).map(([moduleName, moduleFuncs]) => (
           <Box key={moduleName}>
@@ -110,7 +125,7 @@ export function Modules({ modules, account, network }: {
                 }}
               >
                 <Highlight query={[query]} styles={{ bg: "yellow.300" }}>
-                  {func.name}
+                  {`${func.is_entry ? "[W]" : "[R]"} ${func.name}`}
                 </Highlight>
               </ListItem>
             ))}
