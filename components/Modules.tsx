@@ -38,6 +38,7 @@ export function Modules({ modules, account, network }: {
     control,
   });
 
+  const [filter, setFilter] = useState<string>("all");
   const [query, setQuery] = useState<string>("");
 
   modules.sort((a, b) => a.name.localeCompare(b.name));
@@ -49,14 +50,22 @@ export function Modules({ modules, account, network }: {
       })
   );
 
-  if (query.length > 0) {
-    moduleFuncs = moduleFuncs.filter(({ module, func }) => {
+  moduleFuncs = moduleFuncs
+    .filter(({ func }) => {
+      if (filter === "view") {
+        return !func.is_entry;
+      }
+      else if (filter === "entry") {
+        return func.is_entry;
+      }
+      return true;
+    })
+    .filter(({ module, func }) => {
       return (
         module.name.toLowerCase().includes(query.toLowerCase()) ||
         func.name.toLowerCase().includes(query.toLowerCase())
       );
     });
-  }
 
   const group = groupBy(moduleFuncs, (moduleFunc) => moduleFunc.module.name);
 
@@ -66,13 +75,13 @@ export function Modules({ modules, account, network }: {
     <>
       <HStack mb={2}>
         <BiFilterAlt />
-        <Select placeholder='All'>
+        <Select placeholder='All' value={filter} onChange={(e) => { setFilter(e.target.value) }}>
           <option value='view'>View</option>
           <option value='entry'>Entry</option>
         </Select>
       </HStack>
 
-      <HStack>
+      <HStack mb={2}>
         <SearchIcon />
         <Input
           type="search"
@@ -90,9 +99,10 @@ export function Modules({ modules, account, network }: {
                 {moduleName}
               </Highlight>
             </Heading>
-            {moduleFuncs.map(({ module, func }) => (
+            {moduleFuncs.sort((a, b) => Number(a.func.is_entry) - Number(b.func.is_entry)).map(({ module, func }) => (
               <ListItem
                 key={func.name}
+                whiteSpace="nowrap"
                 _hover={{ bgColor: "gray.100" }}
                 bgColor={
                   formFunc === func.name && formModule === module.name
