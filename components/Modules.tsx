@@ -135,6 +135,8 @@ export function Modules({ modules, account, network }: {
                 }}
               >
                 <Box
+                  position="relative"
+                  top="-1px"
                   width={2}
                   height={2}
                   mr={2}

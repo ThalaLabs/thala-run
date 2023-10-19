@@ -43,12 +43,25 @@ export const useFunctionSubmit = () => {
             );
         }
         else {
-            setExecutionResult(JSON.stringify(await getAptosClient(network)
-                .view({
-                    function: `${account}::${module}::${func}`,
-                    type_arguments: data.typeArgs,
-                    arguments: data.args,
-                })));
+            try {
+                setExecutionResult(JSON.stringify(await getAptosClient(network)
+                    .view({
+                        function: `${account}::${module}::${func}`,
+                        type_arguments: data.typeArgs,
+                        arguments: data.args,
+                    })));
+            }
+            catch (error: any) {
+                setExecutionResult(undefined);
+                console.log("error", error);
+                toast({
+                    title: "An error occurred.",
+                    description: error.message,
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                });
+            }
         }
     };
 
