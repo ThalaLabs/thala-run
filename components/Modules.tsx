@@ -53,12 +53,12 @@ export function Modules({ modules, account, network }: {
   moduleFuncs = moduleFuncs
     .filter(({ func }) => {
       if (filter === "view") {
-        return !func.is_entry;
+        return func.is_view;
       }
       else if (filter === "entry") {
         return func.is_entry;
       }
-      return true;
+      return func.is_view || func.is_entry;
     })
     .filter(({ module, func }) => {
       return (
@@ -134,8 +134,15 @@ export function Modules({ modules, account, network }: {
                   }
                 }}
               >
+                <Box
+                  width={2}
+                  height={2}
+                  mr={2}
+                  backgroundColor={func.is_entry ? "green.200" : "blue.200"}
+                  display={"inline-block"}
+                  rounded="full" />
                 <Highlight query={[query]} styles={{ bg: "yellow.300" }}>
-                  {`${func.is_entry ? "[W]" : "[R]"} ${func.name}`}
+                  {func.name}
                 </Highlight>
               </ListItem>
             ))}
