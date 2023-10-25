@@ -25,7 +25,7 @@
     "@vercel/kv": "^0.2.3",
     "aptos": "^1.20.0",
     "eslint": "8.35.0",
-    "eslint-config-next": "13.2.1",
+    "eslint-config-next": "13.5.6",
     "framer-motion": "^10.16.4",
     "lodash": "^4.17.21",
     "msafe-plugin-wallet-adapter": "^0.1.0",
