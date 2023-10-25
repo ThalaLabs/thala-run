@@ -1,5 +1,5 @@
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import { ArrowDownIcon, ArrowUpIcon, SmallCloseIcon } from "@chakra-ui/icons";
+import { ArrowDownIcon, ArrowUpIcon, ExternalLinkIcon, SmallCloseIcon } from "@chakra-ui/icons";
 import {
   Box,
   FormControl,
@@ -10,8 +10,7 @@ import {
   HStack,
   Spacer,
   Text,
-  Tag
-} from "@chakra-ui/react";
+  Tag} from "@chakra-ui/react";
 import { ConnectWallet } from "./ConnectWallet";
 import TypeArgsInput from "./TypeArgsInput";
 import ArgsInput from "./ArgsInput";
@@ -68,6 +67,15 @@ export function RunCard({ id }: { id: string }) {
                 {walletAddressEllipsis(values.account)}::{values.module}::{moveFunc.name}
                 <Tag ml={2} size="sm" colorScheme={moveFunc.is_entry ? "green" : "blue"}>{moveFunc.is_entry ? "entry" : "view"}</Tag>
               </Heading>
+              <Link
+                variant="outline"
+                href={`https://aptscan.ai/accounts/${values.account}?viewMode=${moveFunc.is_entry ? "write" : "read"}&module=${values.module}&functionName=${moveFunc.name}&network=${network}#modules`}
+                isExternal
+                position="relative"
+                top="-2px"
+              >
+                <ExternalLinkIcon mx="2px" />
+              </Link>
               <Spacer />
               <Button onClick={
                 () => {
@@ -127,7 +135,7 @@ export function RunCard({ id }: { id: string }) {
                       isExternal
                       ml={2}
                       color="blue.600"
-                      href={`https://explorer.aptoslabs.com/txn/${executionResult}?network=${network}`}>{executionResult}
+                      href={`https://aptscan.ai/transactions/${executionResult}?network=${network}`}>{executionResult}
                     </Link>
                   </Text> :
                   <Text>Result: {executionResult}</Text>
