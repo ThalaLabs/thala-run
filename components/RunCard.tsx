@@ -130,7 +130,7 @@ export function RunCard({ id }: { id: string }) {
                       href={`https://explorer.aptoslabs.com/txn/${executionResult}?network=${network}`}>{executionResult}
                     </Link>
                   </Text> :
-                  <Text>Result: {executionResult}</Text>
+                  <Text wordBreak={"break-word"}>Result: {executionResult}</Text>
               }
             </Box>}
 
