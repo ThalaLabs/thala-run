@@ -11,7 +11,7 @@ export default function Explorer() {
     <Flex justifyContent="center" alignItems="center">
       <Link
         variant="outline"
-        href={`https://explorer.aptoslabs.com/account/${account}?network=${network}`}
+        href={`https://aptscan.ai/accounts/${account}?network=${network}#modules`}
         isExternal
       >
         <ExternalLinkIcon mx="2px" />

@@ -107,7 +107,7 @@ export const useFunctionSubmit = () => {
             const { hash } = await signAndSubmitTransaction(payload);
             await getAptosClient(network).waitForTransaction(hash);
 
-            const href = `https://explorer.aptoslabs.com/txn/${hash}?network=${network}`;
+            const href = `https://aptscan.ai/transactions/${hash}?network=${network}`;
             setExecutionResult(hash);
 
             toast({
