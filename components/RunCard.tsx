@@ -138,7 +138,7 @@ export function RunCard({ id }: { id: string }) {
                       href={`https://aptscan.ai/transactions/${executionResult}?network=${network}`}>{executionResult}
                     </Link>
                   </Text> :
-                  <Text>Result: {executionResult}</Text>
+                  <Text wordBreak={"break-word"}>Result: {executionResult}</Text>
               }
             </Box>}
 
