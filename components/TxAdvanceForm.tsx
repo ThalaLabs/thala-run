@@ -2,7 +2,6 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Box, Flex, Heading, HStack, Link, Stack } from "@chakra-ui/react";
 import { useContext, useEffect, useRef } from "react";
 import AccountInput from "./AccountInput";
-import Examples from "./Examples";
 import Explorer from "./Explorer";
 import { FuncGroupContext } from "./FuncGroupProvider";
 import GetModules from "./GetModules";
@@ -28,7 +27,6 @@ export default function TxAdvanceForm() {
     <Flex h="100vh">
       <Box w="320px" borderRight="1px" borderColor="gray.200" padding="20px">
         <Heading size="lg">thala.run</Heading>
-        <Examples />
         <GetModules />
       </Box>
       <Flex flex={1} direction="column">

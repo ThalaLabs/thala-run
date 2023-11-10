@@ -4,7 +4,6 @@ import { Box, Flex, Heading, HStack, Link, SimpleGrid } from "@chakra-ui/react";
 // import { useFormContext } from "react-hook-form";
 // import { TxFormType } from "../lib/schema";
 import AccountInput from "./AccountInput";
-import Examples from "./Examples";
 import Explorer from "./Explorer";
 import GetModules from "./GetModules";
 import { Run } from "./Run";
@@ -17,7 +16,6 @@ export default function TxForm() {
     <Flex h="100vh">
       <Box w="320px" borderRight="1px" borderColor="gray.200" padding="20px">
         <Heading size="lg">thala.run</Heading>
-        <Examples />
         <GetModules />
       </Box>
       <Flex flex={1} direction="column">
