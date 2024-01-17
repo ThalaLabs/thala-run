@@ -7,6 +7,6 @@ export default async function handler(
     response: NextApiResponse,
 ) {
     const id = uuid();
-    kv.set(id, request.body);
+    await kv.set(id, request.body);
     return response.status(200).json(id);
 }
