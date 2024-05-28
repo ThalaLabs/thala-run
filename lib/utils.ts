@@ -1,4 +1,4 @@
-import { AptosClient, Types } from "aptos";
+import { Aptos, AptosConfig, MoveFunction, Network } from "@aptos-labs/ts-sdk";
 import { ParsedUrlQuery } from "querystring";
 
 export const FULLNODES: { [network: string]: string } = {
@@ -7,11 +7,14 @@ export const FULLNODES: { [network: string]: string } = {
   mainnet: "https://fullnode.mainnet.aptoslabs.com",
 };
 
-export function getAptosClient(network: string): AptosClient {
-  return new AptosClient(FULLNODES[network]);
+export function getAptosClient(network: Network): Aptos {
+  const aptosConfig = new AptosConfig({ network });
+  const aptos = new Aptos(aptosConfig);
+
+  return aptos;
 }
 
-export function functionSignature(func: Types.MoveFunction): string {
+export function functionSignature(func: MoveFunction): string {
   return `${func.name}${typeArgPlaceholders(
     func.generic_type_params.length
   )}(${func.params.join(", ")})`;

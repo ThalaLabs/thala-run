@@ -1,13 +1,5 @@
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Link, useToast } from "@chakra-ui/react";
-import {
-  AptosClient,
-  BCS,
-  HexString,
-  MaybeHexString,
-  TxnBuilderTypes,
-  Types,
-} from "aptos";
 import { useState } from "react";
 import { SubmitHandler, useFormContext } from "react-hook-form";
 import { TxFormType } from "../lib/schema";
@@ -15,13 +7,22 @@ import { getAptosClient } from "../lib/utils";
 import NextLink from "next/link";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import useSWR from "swr";
+import {
+  MoveModuleBytecode,
+  Network,
+  Hex,
+  Ed25519PublicKey,
+  HexInput,
+} from "@aptos-labs/ts-sdk";
 
 export const useFunctionSubmit = () => {
   const [executionResult, setExecutionResult] = useState<string>();
   const { signAndSubmitTransaction, account: walletAccount } = useWallet();
+  const [isSimulation, setIsSimulation] = useState(false);
+  const [ledgerVersion, setLedgerVersion] = useState<number | undefined>(
+    undefined
+  );
   const toast = useToast();
-
-  console.log(walletAccount, "walletAccount");
 
   const {
     watch,
@@ -30,10 +31,10 @@ export const useFunctionSubmit = () => {
   } = useFormContext<TxFormType>();
   const { account, network, module, func } = watch();
 
-  const { data } = useSWR<Types.MoveModuleBytecode>(
+  const { data } = useSWR<MoveModuleBytecode>(
     [account, network, module],
-    ([account, network, module]: string[3]) =>
-      getAptosClient(network).getAccountModule(account, module)
+    ([accountAddress, network, moduleName]: [string, Network, string]) =>
+      getAptosClient(network).getAccountModule({ accountAddress, moduleName })
   );
 
   const moveModule = data?.abi;
@@ -41,6 +42,7 @@ export const useFunctionSubmit = () => {
 
   const _onSubmit: SubmitHandler<TxFormType> = async (data) => {
     if (!moveFunc) return;
+
     if (moveFunc.is_entry) {
       await onSignAndSubmitTransaction(
         network,
@@ -55,9 +57,14 @@ export const useFunctionSubmit = () => {
         setExecutionResult(
           JSON.stringify(
             await getAptosClient(network).view({
-              function: `${account}::${module}::${func}`,
-              type_arguments: data.typeArgs,
-              arguments: data.args,
+              payload: {
+                function: `${account}::${module}::${func}`,
+                typeArguments: data.typeArgs,
+                functionArguments: data.args,
+              },
+              options: {
+                ledgerVersion,
+              },
             })
           )
         );
@@ -73,6 +80,7 @@ export const useFunctionSubmit = () => {
         });
       }
     }
+    setIsSimulation(false);
   };
 
   const _onSimulateSubmit: SubmitHandler<TxFormType> = async (data) => {
@@ -80,25 +88,25 @@ export const useFunctionSubmit = () => {
 
     try {
       const client = getAptosClient(network);
-      const publicKeyUint8Array = new HexString(
-        walletAccount.publicKey as string
-      ).toUint8Array();
 
-      const payload = {
-        function: `${account}::${module}::${func}`,
-        type_arguments: data.typeArgs,
-        arguments: data.args,
-      };
-      const rawTxn = await client.generateTransaction(account, payload);
+      const transaction = await client.transaction.build.simple({
+        sender: walletAccount.address,
+        data: {
+          function: `${account}::${module}::${func}`,
+          typeArguments: data.typeArgs,
+          functionArguments: data.args,
+        },
+      });
 
-      setExecutionResult(
-        JSON.stringify(
-          await client.simulateTransaction(
-            new TxnBuilderTypes.Ed25519PublicKey(publicKeyUint8Array),
-            rawTxn
-          )
-        )
-      );
+      const [userTransactionResponse] =
+        await client.transaction.simulate.simple({
+          signerPublicKey: new Ed25519PublicKey(
+            walletAccount.publicKey as HexInput
+          ),
+          transaction,
+        });
+      setIsSimulation(true);
+      setExecutionResult(JSON.stringify(userTransactionResponse));
     } catch (error: any) {
       setExecutionResult(undefined);
       console.log("error", error);
@@ -113,7 +121,7 @@ export const useFunctionSubmit = () => {
   };
 
   async function onSignAndSubmitTransaction(
-    network: string,
+    network: Network,
     account: string,
     module: string,
     func: string,
@@ -136,7 +144,7 @@ export const useFunctionSubmit = () => {
       if (!isVector) return arg;
 
       const innerType = isVector[1];
-      if (innerType === "u8") return new HexString(String(arg)).toUint8Array();
+      if (innerType === "u8") return Hex.fromHexString(arg).toUint8Array();
 
       return String(arg).split(",");
     });
@@ -144,7 +152,7 @@ export const useFunctionSubmit = () => {
     // transaction payload expects account to start with 0x
     const account0x = account.startsWith("0x") ? account : `0x${account}`;
 
-    const payload: Types.TransactionPayload_EntryFunctionPayload = {
+    const payload = {
       type: "entry_function_payload",
       function: `${account0x}::${module}::${func}`,
       type_arguments: typeArgs,
@@ -152,7 +160,9 @@ export const useFunctionSubmit = () => {
     };
     try {
       const { hash } = await signAndSubmitTransaction(payload);
-      await getAptosClient(network).waitForTransaction(hash);
+      await getAptosClient(network).waitForTransaction({
+        transactionHash: hash,
+      });
 
       const href = `https://aptscan.ai/transactions/${hash}?network=${network}`;
       setExecutionResult(hash);
@@ -191,5 +201,9 @@ export const useFunctionSubmit = () => {
     onSubmit,
     onSimualteSubmit,
     isSubmitting,
+    isSimulation,
+    ledgerVersion,
+    setLedgerVersion,
+    isView: !(moveFunc && moveFunc.is_entry),
   };
 };

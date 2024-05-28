@@ -1,5 +1,10 @@
+import {
+  Aptos,
+  AptosConfig,
+  MoveModuleBytecode,
+  Network,
+} from "@aptos-labs/ts-sdk";
 import { Center, SkeletonText } from "@chakra-ui/react";
-import { Types } from "aptos";
 import { useFormContext } from "react-hook-form";
 import useSWR from "swr";
 import { TxFormType } from "../lib/schema";
@@ -14,10 +19,10 @@ export default function GetModules() {
   const { account, network } = watch();
   const accountError = errors?.account;
 
-  const { data, error, isLoading } = useSWR<Types.MoveModuleBytecode[]>(
+  const { data, error, isLoading } = useSWR<MoveModuleBytecode[]>(
     accountError === undefined ? [account, network] : null,
-    ([account, network]: string[2]) =>
-      getAptosClient(network).getAccountModules(account)
+    ([account, network]: [string, Network]) =>
+      getAptosClient(network).getAccountModules({ accountAddress: account })
   );
 
   const modules = data
@@ -57,5 +62,7 @@ export default function GetModules() {
       </Center>
     );
   }
-  return <Modules modules={modules ?? []} account={account} network={network} />;
+  return (
+    <Modules modules={modules ?? []} account={account} network={network} />
+  );
 }
