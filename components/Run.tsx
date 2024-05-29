@@ -8,7 +8,6 @@ import {
   Link,
   Heading,
 } from "@chakra-ui/react";
-import { HexString, Types } from "aptos";
 import { SubmitHandler } from "react-hook-form";
 import { functionSignature, getAptosClient } from "../lib/utils";
 import { ConnectWallet } from "./ConnectWallet";
@@ -18,6 +17,7 @@ import useSWR from "swr";
 import { useFormContext } from "react-hook-form";
 import TypeArgsInput from "./TypeArgsInput";
 import ArgsInput from "./ArgsInput";
+import { Hex, MoveModuleBytecode, Network } from "@aptos-labs/ts-sdk";
 
 export function Run() {
   const { connected, signAndSubmitTransaction } = useWallet();
@@ -31,10 +31,10 @@ export function Run() {
 
   const toast = useToast();
 
-  const { data, error } = useSWR<Types.MoveModuleBytecode>(
+  const { data, error } = useSWR<MoveModuleBytecode>(
     [account, network, module],
-    ([account, network, module]: string[3]) =>
-      getAptosClient(network).getAccountModule(account, module)
+    ([accountAddress, network, moduleName]: [string, Network, string]) =>
+      getAptosClient(network).getAccountModule({ accountAddress, moduleName })
   );
 
   const moveModule = data?.abi;
@@ -52,7 +52,7 @@ export function Run() {
   };
 
   async function onSignAndSubmitTransaction(
-    network: string,
+    network: Network,
     account: string,
     module: string,
     func: string,
@@ -75,7 +75,8 @@ export function Run() {
       if (!isVector) return arg;
 
       const innerType = isVector[1];
-      if (innerType === "u8") return new HexString(String(arg)).toUint8Array();
+
+      if (innerType === "u8") return Hex.fromHexString(arg).toUint8Array();
 
       return String(arg).split(",");
     });
@@ -83,7 +84,7 @@ export function Run() {
     // transaction payload expects account to start with 0x
     const account0x = account.startsWith("0x") ? account : `0x${account}`;
 
-    const payload: Types.TransactionPayload_EntryFunctionPayload = {
+    const payload = {
       type: "entry_function_payload",
       function: `${account0x}::${module}::${func}`,
       type_arguments: typeArgs,
@@ -91,7 +92,9 @@ export function Run() {
     };
     try {
       const { hash } = await signAndSubmitTransaction(payload);
-      await getAptosClient(network).waitForTransaction(hash);
+      await getAptosClient(network).waitForTransaction({
+        transactionHash: hash,
+      });
       toast({
         title: "Transaction submitted.",
         description: (

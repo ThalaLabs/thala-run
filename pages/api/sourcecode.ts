@@ -1,7 +1,7 @@
-import { HexString } from "aptos";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAptosClient } from "../../lib/utils";
-import { gunzipSync } from 'zlib';
+import { gunzipSync } from "zlib";
+import { Hex, Network } from "@aptos-labs/ts-sdk";
 
 type PackageMetadata = {
   name: string;
@@ -15,7 +15,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<string>
 ) {
-  const network = req.query["network"] as string;
+  const network = req.query["network"] as Network;
   const account = req.query["account"] as string;
   const module_ = req.query["module"] as string;
 
@@ -26,12 +26,15 @@ export default async function handler(
 
 // TODO: error handling
 async function getSourceCode(
-  network: string,
+  network: Network,
   account: string,
   module_: string
 ) {
   const codeHex = await getAptosClient(network)
-    .getAccountResource(account, "0x1::code::PackageRegistry")
+    .getAccountResource({
+      accountAddress: account,
+      resourceType: "0x1::code::PackageRegistry",
+    })
     .then((resource) => {
       const packages = (resource.data as any).packages as PackageMetadata[];
       const modules = packages.flatMap((p) => p.modules);
@@ -39,7 +42,7 @@ async function getSourceCode(
       return mod.source;
     });
 
-  const codeBytes = new HexString(codeHex).toUint8Array();
+  const codeBytes = Hex.fromHexString(codeHex).toUint8Array();
   const codeString = gunzipSync(codeBytes).toString();
   return codeString;
 }
