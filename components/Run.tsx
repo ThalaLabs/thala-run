@@ -8,7 +8,6 @@ import {
   Link,
   Heading,
 } from "@chakra-ui/react";
-import { HexString } from "aptos";
 import { SubmitHandler } from "react-hook-form";
 import { functionSignature, getAptosClient } from "../lib/utils";
 import { ConnectWallet } from "./ConnectWallet";
@@ -18,7 +17,7 @@ import useSWR from "swr";
 import { useFormContext } from "react-hook-form";
 import TypeArgsInput from "./TypeArgsInput";
 import ArgsInput from "./ArgsInput";
-import { MoveModuleBytecode, Network } from "@aptos-labs/ts-sdk";
+import { Hex, MoveModuleBytecode, Network } from "@aptos-labs/ts-sdk";
 
 export function Run() {
   const { connected, signAndSubmitTransaction } = useWallet();
@@ -77,7 +76,7 @@ export function Run() {
 
       const innerType = isVector[1];
 
-      if (innerType === "u8") return new HexString(String(arg)).toUint8Array();
+      if (innerType === "u8") return Hex.fromHexString(arg).toUint8Array();
 
       return String(arg).split(",");
     });

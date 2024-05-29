@@ -1,6 +1,5 @@
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Link, useToast } from "@chakra-ui/react";
-import { HexString } from "aptos";
 import { useState } from "react";
 import { SubmitHandler, useFormContext } from "react-hook-form";
 import { TxFormType } from "../lib/schema";
@@ -8,7 +7,7 @@ import { getAptosClient } from "../lib/utils";
 import NextLink from "next/link";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import useSWR from "swr";
-import { MoveModuleBytecode, Network } from "@aptos-labs/ts-sdk";
+import { MoveModuleBytecode, Network, Hex } from "@aptos-labs/ts-sdk";
 
 export const useFunctionSubmit = () => {
   const [executionResult, setExecutionResult] = useState<string>();
@@ -93,7 +92,7 @@ export const useFunctionSubmit = () => {
       if (!isVector) return arg;
 
       const innerType = isVector[1];
-      if (innerType === "u8") return new HexString(String(arg)).toUint8Array();
+      if (innerType === "u8") return Hex.fromHexString(arg).toUint8Array();
 
       return String(arg).split(",");
     });
