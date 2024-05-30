@@ -42,7 +42,6 @@ export const useFunctionSubmit = () => {
 
   const _onSubmit: SubmitHandler<TxFormType> = async (data) => {
     if (!moveFunc) return;
-
     if (moveFunc.is_entry) {
       await onSignAndSubmitTransaction(
         network,

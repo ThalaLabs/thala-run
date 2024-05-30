@@ -1,8 +1,7 @@
-import { HexString } from "aptos";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAptosClient } from "../../lib/utils";
 import { gunzipSync } from "zlib";
-import { Network } from "@aptos-labs/ts-sdk";
+import { Hex, Network } from "@aptos-labs/ts-sdk";
 
 type PackageMetadata = {
   name: string;
@@ -43,7 +42,7 @@ async function getSourceCode(
       return mod.source;
     });
 
-  const codeBytes = new HexString(codeHex).toUint8Array();
+  const codeBytes = Hex.fromHexString(codeHex).toUint8Array();
   const codeString = gunzipSync(codeBytes).toString();
   return codeString;
 }
