@@ -5,6 +5,8 @@ import {
   ExternalLinkIcon,
   SmallCloseIcon,
 } from "@chakra-ui/icons";
+import ReactJson from "react-json-view";
+
 import {
   Box,
   FormControl,
@@ -191,15 +193,18 @@ export function RunCard({ id }: { id: string }) {
                 {moveFunc.is_entry ? (
                   <Text>
                     {isSimulation ? "Simulation" : "Transaction"}:
-                    <Link
-                      pointerEvents={isSimulation ? "none" : undefined}
-                      isExternal
-                      ml={2}
-                      color="blue.600"
-                      href={`https://aptscan.ai/transactions/${executionResult}?network=${network}`}
-                    >
-                      {executionResult}
-                    </Link>
+                    {isSimulation ? (
+                      <ReactJson src={JSON.parse(executionResult)} />
+                    ) : (
+                      <Link
+                        isExternal
+                        ml={2}
+                        color="blue.600"
+                        href={`https://aptscan.ai/transactions/${executionResult}?network=${network}`}
+                      >
+                        {executionResult}
+                      </Link>
+                    )}
                   </Text>
                 ) : (
                   <Text wordBreak={"break-word"}>
