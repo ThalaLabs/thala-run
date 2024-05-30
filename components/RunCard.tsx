@@ -5,7 +5,6 @@ import {
   ExternalLinkIcon,
   SmallCloseIcon,
 } from "@chakra-ui/icons";
-import ReactJson from "react-json-view";
 
 import {
   Box,
@@ -29,6 +28,9 @@ import { FuncGroupContext } from "./FuncGroupProvider";
 import { walletAddressEllipsis } from "../functions/walletAddressEllipsis";
 import { useFunctionSubmit } from "../hooks/useFunctionSubmit";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 export function RunCard({ id }: { id: string }) {
   const { connected } = useWallet();
@@ -194,7 +196,7 @@ export function RunCard({ id }: { id: string }) {
                   <Text>
                     {isSimulation ? "Simulation" : "Transaction"}:
                     {isSimulation ? (
-                      <ReactJson src={JSON.parse(executionResult)} />
+                      <DynamicReactJson src={JSON.parse(executionResult)} />
                     ) : (
                       <Link
                         isExternal
