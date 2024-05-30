@@ -17,6 +17,7 @@ import {
   Text,
   Tag,
   Flex,
+  Input,
 } from "@chakra-ui/react";
 import { ConnectWallet } from "./ConnectWallet";
 import TypeArgsInput from "./TypeArgsInput";
@@ -37,6 +38,10 @@ export function RunCard({ id }: { id: string }) {
     onSimualteSubmit,
     executionResult,
     isSubmitting,
+    isSimulation,
+    isView,
+    ledgerVersion,
+    setLedgerVersion,
   } = useFunctionSubmit();
 
   const { account, network, module, func, typeArgs, args } = watch();
@@ -138,6 +143,23 @@ export function RunCard({ id }: { id: string }) {
                 <SmallCloseIcon />
               </Button>
             </HStack>
+            {isView && (
+              <Flex alignItems="center" gap={2}>
+                <Text>{`Ledger Version (optional):`}</Text>
+                <Input
+                  type="number"
+                  size="xs"
+                  width="fit-content"
+                  value={ledgerVersion}
+                  onChange={(e) => {
+                    setLedgerVersion(
+                      e.target.value ? Number(e.target.value) : undefined
+                    );
+                  }}
+                />
+              </Flex>
+            )}
+
             {moveFunc.generic_type_params.length > 0 && (
               <TypeArgsInput nTypeArgs={moveFunc.generic_type_params.length} />
             )}
@@ -168,8 +190,9 @@ export function RunCard({ id }: { id: string }) {
               <Box mt={4}>
                 {moveFunc.is_entry ? (
                   <Text>
-                    Transaction:
+                    {isSimulation ? "Simulation" : "Transaction"}:
                     <Link
+                      pointerEvents={isSimulation ? "none" : undefined}
                       isExternal
                       ml={2}
                       color="blue.600"
