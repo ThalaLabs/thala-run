@@ -29,6 +29,28 @@
     eventemitter3 "^5.0.1"
     form-data "^4.0.0"
 
+"@aptos-labs/aptos-client@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@aptos-labs/aptos-client/-/aptos-client-0.1.0.tgz#911fb27e436e5731290de0e0cfce6e0d3feeabaa"
+  integrity sha512-q3s6pPq8H2buGp+tPuIRInWsYOuhSEwuNJPwd2YnsiID3YSLihn2ug39ktDJAcSOprUcp7Nid8WK7hKqnUmSdA==
+  dependencies:
+    axios "1.6.2"
+    got "^11.8.6"
+
+"@aptos-labs/ts-sdk@^1.16.0":
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/@aptos-labs/ts-sdk/-/ts-sdk-1.16.0.tgz#b45830dd5accfb71c39e20e4445b3bd25598ca71"
+  integrity sha512-NqJDx39sHN0o7BpxpQzishoZjGBzvXqSVxO+bRm6OPP/Oe+Kb51R5x8dWvW9i3amO3QNdocg/p4jFRCwzqy2Gg==
+  dependencies:
+    "@aptos-labs/aptos-cli" "^0.1.8"
+    "@aptos-labs/aptos-client" "^0.1.0"
+    "@noble/curves" "^1.4.0"
+    "@noble/hashes" "^1.4.0"
+    "@scure/bip32" "^1.4.0"
+    "@scure/bip39" "^1.3.0"
+    eventemitter3 "^5.0.1"
+    form-data "^4.0.0"
+
 "@aptos-labs/wallet-adapter-core@*", "@aptos-labs/wallet-adapter-core@0.2.3", "@aptos-labs/wallet-adapter-core@^0.2.0":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@aptos-labs/wallet-adapter-core/-/wallet-adapter-core-0.2.3.tgz#916807716242333d3e098f4704c8494244723a81"

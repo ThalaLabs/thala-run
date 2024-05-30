@@ -7,11 +7,21 @@ import { getAptosClient } from "../lib/utils";
 import NextLink from "next/link";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import useSWR from "swr";
-import { MoveModuleBytecode, Network, Hex } from "@aptos-labs/ts-sdk";
+import {
+  MoveModuleBytecode,
+  Network,
+  Hex,
+  Ed25519PublicKey,
+  HexInput,
+} from "@aptos-labs/ts-sdk";
 
 export const useFunctionSubmit = () => {
   const [executionResult, setExecutionResult] = useState<string>();
-  const { signAndSubmitTransaction } = useWallet();
+  const { signAndSubmitTransaction, account: walletAccount } = useWallet();
+  const [isSimulation, setIsSimulation] = useState(false);
+  const [ledgerVersion, setLedgerVersion] = useState<number | undefined>(
+    undefined
+  );
   const toast = useToast();
 
   const {
@@ -51,6 +61,9 @@ export const useFunctionSubmit = () => {
                 typeArguments: data.typeArgs,
                 functionArguments: data.args,
               },
+              options: {
+                ledgerVersion,
+              },
             })
           )
         );
@@ -65,6 +78,44 @@ export const useFunctionSubmit = () => {
           isClosable: true,
         });
       }
+    }
+    setIsSimulation(false);
+  };
+
+  const _onSimulateSubmit: SubmitHandler<TxFormType> = async (data) => {
+    if (!moveFunc || !walletAccount) return;
+
+    try {
+      const client = getAptosClient(network);
+
+      const transaction = await client.transaction.build.simple({
+        sender: walletAccount.address,
+        data: {
+          function: `${account}::${module}::${func}`,
+          typeArguments: data.typeArgs,
+          functionArguments: data.args,
+        },
+      });
+
+      const [userTransactionResponse] =
+        await client.transaction.simulate.simple({
+          signerPublicKey: new Ed25519PublicKey(
+            walletAccount.publicKey as HexInput
+          ),
+          transaction,
+        });
+      setIsSimulation(true);
+      setExecutionResult(JSON.stringify(userTransactionResponse));
+    } catch (error: any) {
+      setExecutionResult(undefined);
+      console.log("error", error);
+      toast({
+        title: "An error occurred.",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
@@ -140,6 +191,18 @@ export const useFunctionSubmit = () => {
   }
 
   const onSubmit = handleSubmit(_onSubmit);
+  const onSimualteSubmit = handleSubmit(_onSimulateSubmit);
 
-  return { watch, executionResult, moveFunc, onSubmit, isSubmitting };
+  return {
+    watch,
+    executionResult,
+    moveFunc,
+    onSubmit,
+    onSimualteSubmit,
+    isSubmitting,
+    isSimulation,
+    ledgerVersion,
+    setLedgerVersion,
+    isView: !(moveFunc && moveFunc.is_entry),
+  };
 };
