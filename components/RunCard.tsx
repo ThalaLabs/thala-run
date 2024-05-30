@@ -5,6 +5,7 @@ import {
   ExternalLinkIcon,
   SmallCloseIcon,
 } from "@chakra-ui/icons";
+
 import {
   Box,
   FormControl,
@@ -27,6 +28,9 @@ import { FuncGroupContext } from "./FuncGroupProvider";
 import { walletAddressEllipsis } from "../functions/walletAddressEllipsis";
 import { useFunctionSubmit } from "../hooks/useFunctionSubmit";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
 export function RunCard({ id }: { id: string }) {
   const { connected } = useWallet();
@@ -191,15 +195,18 @@ export function RunCard({ id }: { id: string }) {
                 {moveFunc.is_entry ? (
                   <Text>
                     {isSimulation ? "Simulation" : "Transaction"}:
-                    <Link
-                      pointerEvents={isSimulation ? "none" : undefined}
-                      isExternal
-                      ml={2}
-                      color="blue.600"
-                      href={`https://aptscan.ai/transactions/${executionResult}?network=${network}`}
-                    >
-                      {executionResult}
-                    </Link>
+                    {isSimulation ? (
+                      <DynamicReactJson src={JSON.parse(executionResult)} />
+                    ) : (
+                      <Link
+                        isExternal
+                        ml={2}
+                        color="blue.600"
+                        href={`https://aptscan.ai/transactions/${executionResult}?network=${network}`}
+                      >
+                        {executionResult}
+                      </Link>
+                    )}
                   </Text>
                 ) : (
                   <Text wordBreak={"break-word"}>

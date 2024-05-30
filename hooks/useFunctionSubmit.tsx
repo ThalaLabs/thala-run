@@ -61,9 +61,7 @@ export const useFunctionSubmit = () => {
                 typeArguments: data.typeArgs,
                 functionArguments: data.args,
               },
-              options: {
-                ledgerVersion,
-              },
+              options: ledgerVersion !== undefined ? { ledgerVersion } : {},
             })
           )
         );
