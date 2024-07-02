@@ -34,6 +34,9 @@ dependencies:
   '@pontem/wallet-adapter-plugin':
     specifier: ^0.2.1
     version: 0.2.1
+  '@types/lodash':
+    specifier: ^4.17.6
+    version: 4.17.6
   '@types/node':
     specifier: 18.14.2
     version: 18.14.2
