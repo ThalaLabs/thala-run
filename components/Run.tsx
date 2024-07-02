@@ -17,7 +17,7 @@ import useSWR from "swr";
 import { useFormContext } from "react-hook-form";
 import TypeArgsInput from "./TypeArgsInput";
 import ArgsInput from "./ArgsInput";
-import { Hex, MoveModuleBytecode, Network } from "@aptos-labs/ts-sdk";
+import { Hex, InputEntryFunctionData, MoveModuleBytecode, Network } from "@aptos-labs/ts-sdk";
 
 export function Run() {
   const { connected, signAndSubmitTransaction } = useWallet();
@@ -84,14 +84,13 @@ export function Run() {
     // transaction payload expects account to start with 0x
     const account0x = account.startsWith("0x") ? account : `0x${account}`;
 
-    const payload = {
-      type: "entry_function_payload",
+    const payload: InputEntryFunctionData = {
       function: `${account0x}::${module}::${func}`,
-      type_arguments: typeArgs,
-      arguments: handleArrayArgs,
+      typeArguments: typeArgs,
+      functionArguments: handleArrayArgs,
     };
     try {
-      const { hash } = await signAndSubmitTransaction(payload);
+      const { hash } = await signAndSubmitTransaction({ data: payload });
       await getAptosClient(network).waitForTransaction({
         transactionHash: hash,
       });
