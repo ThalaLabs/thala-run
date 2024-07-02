@@ -13,6 +13,7 @@ import {
   Hex,
   Ed25519PublicKey,
   HexInput,
+  InputEntryFunctionData,
 } from "@aptos-labs/ts-sdk";
 
 export const useFunctionSubmit = () => {
@@ -149,14 +150,13 @@ export const useFunctionSubmit = () => {
     // transaction payload expects account to start with 0x
     const account0x = account.startsWith("0x") ? account : `0x${account}`;
 
-    const payload = {
-      type: "entry_function_payload",
+    const payload: InputEntryFunctionData = {
       function: `${account0x}::${module}::${func}`,
-      type_arguments: typeArgs,
-      arguments: handleArrayArgs,
+      typeArguments: typeArgs,
+      functionArguments: handleArrayArgs,
     };
     try {
-      const { hash } = await signAndSubmitTransaction(payload);
+      const { hash } = await signAndSubmitTransaction({ data: payload });
       await getAptosClient(network).waitForTransaction({
         transactionHash: hash,
       });

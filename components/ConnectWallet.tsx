@@ -29,7 +29,7 @@ export function ConnectWallet({ ...props }: ConnectWalletProps) {
           <ModalCloseButton />
           <ModalBody>
             <Stack>
-              {wallets.map((wallet) => (
+              {wallets?.map((wallet) => (
                 <Button
                   key={wallet.name}
                   onClick={() => connect(wallet.name)}
