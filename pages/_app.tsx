@@ -5,7 +5,7 @@ import { PetraWallet } from "petra-plugin-wallet-adapter";
 import { PontemWallet } from "@pontem/wallet-adapter-plugin";
 import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
 import { MartianWallet } from "@martianwallet/aptos-wallet-adapter";
-import { MSafeWalletAdapter } from "msafe-plugin-wallet-adapter";
+import { MSafeWalletAdapter } from "@msafe/aptos-wallet-adapter";
 
 const config = {
   initialColorMode: 'light',
