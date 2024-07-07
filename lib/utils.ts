@@ -1,5 +1,11 @@
-import { Aptos, AptosConfig, MoveFunction, Network } from "@aptos-labs/ts-sdk";
+import {
+  Aptos,
+  AptosConfig,
+  MoveFunction,
+  Network as AptosNetwork,
+} from "@aptos-labs/ts-sdk";
 import { ParsedUrlQuery } from "querystring";
+import { Network } from "../types/Network";
 
 export const FULLNODES: { [network: string]: string } = {
   devnet: "https://fullnode.devnet.aptoslabs.com",
@@ -7,8 +13,19 @@ export const FULLNODES: { [network: string]: string } = {
   mainnet: "https://fullnode.mainnet.aptoslabs.com",
 };
 
+const CUSTOM_NETWORKS = {
+  "movement testnet": "https://aptos.testnet.suzuka.movementlabs.xyz/v1",
+};
 export function getAptosClient(network: Network): Aptos {
-  const aptosConfig = new AptosConfig({ network });
+  let aptosConfig = new AptosConfig({ network });
+
+  if (network in CUSTOM_NETWORKS) {
+    aptosConfig = new AptosConfig({
+      network: AptosNetwork.CUSTOM,
+      fullnode: CUSTOM_NETWORKS[network],
+    });
+  }
+
   const aptos = new Aptos(aptosConfig);
 
   return aptos;

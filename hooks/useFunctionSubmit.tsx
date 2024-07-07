@@ -9,12 +9,12 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 import useSWR from "swr";
 import {
   MoveModuleBytecode,
-  Network,
   Hex,
   Ed25519PublicKey,
   HexInput,
   InputEntryFunctionData,
 } from "@aptos-labs/ts-sdk";
+import { Network } from "../types/Network";
 
 export const useFunctionSubmit = () => {
   const [executionResult, setExecutionResult] = useState<string>();
@@ -45,7 +45,7 @@ export const useFunctionSubmit = () => {
     if (!moveFunc) return;
     if (moveFunc.is_entry) {
       await onSignAndSubmitTransaction(
-        network,
+        network as Network,
         account,
         module,
         func,
@@ -56,7 +56,7 @@ export const useFunctionSubmit = () => {
       try {
         setExecutionResult(
           JSON.stringify(
-            await getAptosClient(network).view({
+            await getAptosClient(network as Network).view({
               payload: {
                 function: `${account}::${module}::${func}`,
                 typeArguments: data.typeArgs,
@@ -85,7 +85,7 @@ export const useFunctionSubmit = () => {
     if (!moveFunc || !walletAccount) return;
 
     try {
-      const client = getAptosClient(network);
+      const client = getAptosClient(network as Network);
 
       const transaction = await client.transaction.build.simple({
         sender: walletAccount.address,

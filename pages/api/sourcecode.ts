@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAptosClient } from "../../lib/utils";
 import { gunzipSync } from "zlib";
-import { Hex, Network } from "@aptos-labs/ts-sdk";
+import { Hex } from "@aptos-labs/ts-sdk";
+import { Network } from "../../types/Network";
 
 type PackageMetadata = {
   name: string;
