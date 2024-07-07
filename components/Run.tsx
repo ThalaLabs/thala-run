@@ -43,7 +43,7 @@ export function Run() {
 
   const onSubmit: SubmitHandler<TxFormType> = async (data) => {
     await onSignAndSubmitTransaction(
-      network,
+      network as Network, 
       account,
       module,
       func,
