@@ -1,10 +1,11 @@
-import { AccountAddressInput, Network } from "@aptos-labs/ts-sdk";
+import { Network } from "@aptos-labs/ts-sdk";
 import { z } from "zod";
 
 export const NetworkEnum = z.enum([
   Network.DEVNET,
   Network.TESTNET,
   Network.MAINNET,
+  "movement testnet",
 ]);
 
 export const TxFormSchema = z.object({

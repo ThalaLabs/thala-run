@@ -1,14 +1,12 @@
 import {
-  Aptos,
-  AptosConfig,
   MoveModuleBytecode,
-  Network,
 } from "@aptos-labs/ts-sdk";
 import { Center, SkeletonText } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
 import useSWR from "swr";
 import { TxFormType } from "../lib/schema";
 import { getAptosClient } from "../lib/utils";
+import { Network } from "../types/Network";
 import { Modules } from "./Modules";
 
 export default function GetModules() {

@@ -9,12 +9,12 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 import useSWR from "swr";
 import {
   MoveModuleBytecode,
-  Network,
   Hex,
   Ed25519PublicKey,
   HexInput,
   InputEntryFunctionData,
 } from "@aptos-labs/ts-sdk";
+import { Network } from "../types/Network";
 
 export const useFunctionSubmit = () => {
   const [executionResult, setExecutionResult] = useState<string>();

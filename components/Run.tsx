@@ -17,7 +17,8 @@ import useSWR from "swr";
 import { useFormContext } from "react-hook-form";
 import TypeArgsInput from "./TypeArgsInput";
 import ArgsInput from "./ArgsInput";
-import { Hex, InputEntryFunctionData, MoveModuleBytecode, Network } from "@aptos-labs/ts-sdk";
+import { Hex, InputEntryFunctionData, MoveModuleBytecode } from "@aptos-labs/ts-sdk";
+import { Network } from "../types/Network";
 
 export function Run() {
   const { connected, signAndSubmitTransaction } = useWallet();
