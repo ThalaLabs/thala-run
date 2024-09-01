@@ -15,6 +15,7 @@ import {
   InputEntryFunctionData,
 } from "@aptos-labs/ts-sdk";
 import { Network } from "../types/Network";
+import { encodeInputArgsForViewRequest } from "../lib/viewArgsEncoder";
 
 export const useFunctionSubmit = () => {
   const [executionResult, setExecutionResult] = useState<string>();
@@ -60,7 +61,7 @@ export const useFunctionSubmit = () => {
               payload: {
                 function: `${account}::${module}::${func}`,
                 typeArguments: data.typeArgs,
-                functionArguments: data.args,
+                functionArguments: data.args.map((arg, i) => encodeInputArgsForViewRequest(moveFunc.params[i], arg)),
               },
               options: ledgerVersion !== undefined ? { ledgerVersion } : {},
             })
