@@ -55,9 +55,6 @@ dependencies:
   '@vercel/kv':
     specifier: ^0.2.3
     version: 0.2.3
-  aptos:
-    specifier: ^1.21.0
-    version: 1.21.0
   eslint:
     specifier: 8.35.0
     version: 8.35.0
