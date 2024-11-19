@@ -15,6 +15,9 @@ export const TxFormSchema = z.object({
   func: z.string(),
   typeArgs: z.string().array(),
   args: z.any().array(),
+  funcComment: z.string(),
+  typeArgsComment: z.string().array(),
+  argsComment: z.string().array(),
 });
 
 export type NetworkType = z.infer<typeof NetworkEnum>;

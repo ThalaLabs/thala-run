@@ -132,6 +132,9 @@ export function Modules({
                           func: func.name,
                           typeArgs: [],
                           args: [],
+                          funcComment: "",
+                          typeArgsComment: [],
+                          argsComment: [],
                         },
                       ]);
                       context.scrollToTop();

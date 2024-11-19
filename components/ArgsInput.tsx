@@ -1,6 +1,7 @@
-import { Box, FormLabel, Input, Textarea } from "@chakra-ui/react";
+import { Text, Box, FormLabel, HStack, Input, Textarea, Divider } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
 import { TxFormType } from "../lib/schema";
+import { EditableName } from "./EditableName";
 
 export default function TypeArgsInput({ params }: { params: string[] }) {
   const { register } = useFormContext<TxFormType>();
@@ -13,9 +14,11 @@ export default function TypeArgsInput({ params }: { params: string[] }) {
     <>
       {args.map((arg, i) => (
         <Box my={2} key={i.toString()}>
-          <FormLabel>
-            arg{i}: {arg}
-          </FormLabel>
+          <HStack alignItems={"center"} gap={2} mb={1}>
+            <Text color={"gray.400"} fontSize={"sm"}>arg{i}: {arg}</Text>
+            <Divider orientation="vertical" height={"3"} />
+            <EditableName fieldPath={`argsComment.${i}`} />
+          </HStack>
           {arg === "address" ? (
             <Textarea {...register(`args.${i}`)} />
           ) : (

@@ -19,6 +19,7 @@ import {
   Tag,
   Flex,
   Input,
+  Divider,
 } from "@chakra-ui/react";
 import { ConnectWallet } from "./ConnectWallet";
 import TypeArgsInput from "./TypeArgsInput";
@@ -29,6 +30,7 @@ import { walletAddressEllipsis } from "../functions/walletAddressEllipsis";
 import { useFunctionSubmit } from "../hooks/useFunctionSubmit";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
+import { EditableName } from "./EditableName";
 
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
@@ -95,13 +97,13 @@ export function RunCard({ id }: { id: string }) {
                   {moveFunc.is_entry ? "entry" : "view"}
                 </Tag>
               </Heading>
+              <Divider orientation="vertical" height={"3"} />
+              <EditableName fieldPath="funcComment" fontSize={"md"} fontWeight={"semibold"} />
               <Link
                 variant="outline"
-                href={`https://aptscan.ai/accounts/${values.account}?viewMode=${
-                  moveFunc.is_entry ? "write" : "read"
-                }&module=${values.module}&functionName=${
-                  moveFunc.name
-                }&network=${network}#modules`}
+                href={`https://aptscan.ai/accounts/${values.account}?viewMode=${moveFunc.is_entry ? "write" : "read"
+                  }&module=${values.module}&functionName=${moveFunc.name
+                  }&network=${network}#modules`}
                 isExternal
                 position="relative"
                 top="-2px"
