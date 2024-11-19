@@ -13,6 +13,7 @@ export const EditableName = ({ fieldPath, ...props }: Props) => {
     const { register, watch } = useFormContext<TxFormType>();
     const [editing, setEditing] = useState(false);
     const value = watch(fieldPath);
+
     return <HStack gap={1}>
         {
             editing ?
@@ -23,7 +24,13 @@ export const EditableName = ({ fieldPath, ...props }: Props) => {
                         width="fit-content"
                         minWidth="24"
                         placeholder="name"
-                        {...register(fieldPath)} />
+                        {...register(fieldPath)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                setEditing(false);
+                            }
+                        }}
+                    />
                     <Button size="xs" variant="ghost" onClick={() => setEditing(false)}>
                         <TiTick />
                     </Button>
@@ -35,7 +42,6 @@ export const EditableName = ({ fieldPath, ...props }: Props) => {
                         <FaEdit />
                     </Button>
                 </>
-
         }
     </HStack>
 }
