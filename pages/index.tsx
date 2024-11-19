@@ -21,6 +21,9 @@ export default function Home() {
                 func: (router.query["func"] || "") as string,
                 typeArgs: parseArrayParam(router.query, "typeArgs"),
                 args: parseArrayParam(router.query, "args"),
+                funcComment: "",
+                typeArgsComment: [],
+                argsComment: [],
             };
             setDefaultValues(defaultValues);
         }
