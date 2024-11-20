@@ -32,7 +32,7 @@ export function ConnectWallet({ ...props }: ConnectWalletProps) {
               {wallets?.map((wallet) => (
                 <Button
                   key={wallet.name}
-                  onClick={() => connect(wallet.name)}
+                  onClick={() => wallet.readyState === "Installed" ? connect(wallet.name) : window.open(wallet.url)}
                   disabled={wallet.readyState !== "Installed"}
                 >
                   {wallet.name}
