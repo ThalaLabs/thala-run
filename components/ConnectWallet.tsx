@@ -34,7 +34,7 @@ export function ConnectWallet({ ...props }: ConnectWalletProps) {
                 <Button
                   key={wallet.name}
                   onClick={() => wallet.readyState === "Installed" ? connect(wallet.name) : window.open(
-                    wallet.name === MSafeWalletName ? window.location.href : wallet.url)}
+                    wallet.name === MSafeWalletName ? `https://aptos.m-safe.io/store/0?url=${window.location.href}` : wallet.url)}
                   disabled={wallet.readyState !== "Installed"}
                 >
                   {wallet.name}
