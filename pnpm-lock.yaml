@@ -28,6 +28,9 @@ dependencies:
   '@martianwallet/aptos-wallet-adapter':
     specifier: ^0.0.5
     version: 0.0.5
+  '@msafe/aptos-wallet':
+    specifier: ^6.1.1
+    version: 6.1.1
   '@msafe/aptos-wallet-adapter':
     specifier: ^1.1.3
     version: 1.1.3(@aptos-labs/ts-sdk@1.18.1)(@wallet-standard/core@1.0.3)

@@ -6,6 +6,9 @@ import { parseArrayParam } from "../lib/utils";
 import TxAdvanceForm from "../components/TxAdvanceForm";
 import { FuncGroupProvider } from "../components/FuncGroupProvider";
 import { GenerateLinkButton } from "../components/GenerateLinkButton";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { MSafeWallet } from "@msafe/aptos-wallet";
+import { MSafeWalletName } from "@msafe/aptos-wallet-adapter";
 
 export default function Home() {
     const router = useRouter();
@@ -28,6 +31,14 @@ export default function Home() {
             setDefaultValues(defaultValues);
         }
     }, [router.isReady, router.query]);
+
+    const { connect, connected } = useWallet();
+
+    useEffect(() => {
+        if (!connected && MSafeWallet.inMSafeWallet()) {
+            connect(MSafeWalletName);
+        }
+    }, [connected, connect]);
 
     if (!defaultValues) {
         return;
