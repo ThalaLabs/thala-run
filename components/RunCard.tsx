@@ -50,7 +50,7 @@ export function RunCard({ id }: { id: string }) {
     setLedgerVersion,
   } = useFunctionSubmit();
 
-  const { account, network, module, func, typeArgs, args } = watch();
+  const { account, network, module, func, typeArgs, args, funcComment, typeArgsComment, argsComment } = watch();
   const values = watch();
 
   const serializedTypeArgs = JSON.stringify(typeArgs);
@@ -63,7 +63,7 @@ export function RunCard({ id }: { id: string }) {
       ...values,
     };
     context?.setFuncGroup(context.funcGroup.slice());
-  }, [serializedTypeArgs, serializedArgs, id]);
+  }, [serializedTypeArgs, serializedArgs, id, funcComment, typeArgsComment, argsComment]);
   if (!account) return <Box></Box>;
   if (!moveFunc) return <Spinner />;
 
