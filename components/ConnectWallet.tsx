@@ -11,8 +11,9 @@ import {
   Stack,
   useDisclosure,
 } from "@chakra-ui/react";
+import { MSafeWalletName } from "@msafe/aptos-wallet-adapter";
 
-interface ConnectWalletProps extends ButtonProps {}
+interface ConnectWalletProps extends ButtonProps { }
 
 export function ConnectWallet({ ...props }: ConnectWalletProps) {
   const { connect, wallets } = useWallet();
@@ -32,7 +33,8 @@ export function ConnectWallet({ ...props }: ConnectWalletProps) {
               {wallets?.map((wallet) => (
                 <Button
                   key={wallet.name}
-                  onClick={() => connect(wallet.name)}
+                  onClick={() => wallet.readyState === "Installed" ? connect(wallet.name) : window.open(
+                    wallet.name === MSafeWalletName ? `https://aptos.m-safe.io/store/0?url=${window.location.href}` : wallet.url)}
                   disabled={wallet.readyState !== "Installed"}
                 >
                   {wallet.name}
