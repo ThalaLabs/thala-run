@@ -4,9 +4,8 @@ import {
 import { Center, SkeletonText } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
 import useSWR from "swr";
-import { TxFormType } from "../lib/schema";
+import { NetworkType, TxFormType } from "../lib/schema";
 import { getAptosClient } from "../lib/utils";
-import { Network } from "../types/Network";
 import { Modules } from "./Modules";
 
 export default function GetModules() {
@@ -19,7 +18,7 @@ export default function GetModules() {
 
   const { data, error, isLoading } = useSWR<MoveModuleBytecode[]>(
     accountError === undefined ? [account, network] : null,
-    ([account, network]: [string, Network]) =>
+    ([account, network]: [string, NetworkType]) =>
       getAptosClient(network).getAccountModules({ accountAddress: account })
   );
 

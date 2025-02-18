@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getAptosClient } from "../../lib/utils";
 import { gunzipSync } from "zlib";
 import { Hex } from "@aptos-labs/ts-sdk";
-import { Network } from "../../types/Network";
+import { NetworkType } from "../../lib/schema";
 
 type PackageMetadata = {
   name: string;
@@ -16,7 +16,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<string>
 ) {
-  const network = req.query["network"] as Network;
+  const network = req.query["network"] as NetworkType;
   const account = req.query["account"] as string;
   const module_ = req.query["module"] as string;
 
@@ -27,7 +27,7 @@ export default async function handler(
 
 // TODO: error handling
 async function getSourceCode(
-  network: Network,
+  network: NetworkType,
   account: string,
   module_: string
 ) {
