@@ -14,8 +14,11 @@ export const FULLNODES: { [network: string]: string } = {
 };
 
 const CUSTOM_NETWORKS = {
-  "movement testnet": "https://aptos.testnet.suzuka.movementlabs.xyz/v1",
+  "movement mainnet": "https://mainnet.movementnetwork.xyz/v1",
+  "movement porto": "	https://aptos.testnet.porto.movementlabs.xyz/v1",
+  "movement bardock": "https://aptos.testnet.bardock.movementlabs.xyz/v1",
 };
+
 export function getAptosClient(network: Network): Aptos {
   let aptosConfig = new AptosConfig({ network });
 

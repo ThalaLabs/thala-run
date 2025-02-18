@@ -5,7 +5,9 @@ export const NetworkEnum = z.enum([
   Network.DEVNET,
   Network.TESTNET,
   Network.MAINNET,
-  "movement testnet",
+  "movement porto",
+  "movement mainnet",
+  "movement bardock",
 ]);
 
 export const TxFormSchema = z.object({
