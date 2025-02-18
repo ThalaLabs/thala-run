@@ -2,7 +2,7 @@ import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { Link, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { SubmitHandler, useFormContext } from "react-hook-form";
-import { TxFormType } from "../lib/schema";
+import { NetworkType, TxFormType } from "../lib/schema";
 import { getAptosClient } from "../lib/utils";
 import NextLink from "next/link";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
@@ -14,7 +14,6 @@ import {
   HexInput,
   InputEntryFunctionData,
 } from "@aptos-labs/ts-sdk";
-import { Network } from "../types/Network";
 import { encodeInputArgsForViewRequest } from "../lib/viewArgsEncoder";
 
 export const useFunctionSubmit = () => {
@@ -35,7 +34,7 @@ export const useFunctionSubmit = () => {
 
   const { data } = useSWR<MoveModuleBytecode>(
     [account, network, module],
-    ([accountAddress, network, moduleName]: [string, Network, string]) =>
+    ([accountAddress, network, moduleName]: [string, NetworkType, string]) =>
       getAptosClient(network).getAccountModule({ accountAddress, moduleName })
   );
 
@@ -46,7 +45,7 @@ export const useFunctionSubmit = () => {
     if (!moveFunc) return;
     if (moveFunc.is_entry) {
       await onSignAndSubmitTransaction(
-        network as Network,
+        network as NetworkType,
         account,
         module,
         func,
@@ -57,7 +56,7 @@ export const useFunctionSubmit = () => {
       try {
         setExecutionResult(
           JSON.stringify(
-            await getAptosClient(network as Network).view({
+            await getAptosClient(network as NetworkType).view({
               payload: {
                 function: `${account}::${module}::${func}`,
                 typeArguments: data.typeArgs,
@@ -86,7 +85,7 @@ export const useFunctionSubmit = () => {
     if (!moveFunc || !walletAccount) return;
 
     try {
-      const client = getAptosClient(network as Network);
+      const client = getAptosClient(network as NetworkType);
 
       const transaction = await client.transaction.build.simple({
         sender: walletAccount.address,
@@ -120,7 +119,7 @@ export const useFunctionSubmit = () => {
   };
 
   async function onSignAndSubmitTransaction(
-    network: Network,
+    network: NetworkType,
     account: string,
     module: string,
     func: string,
