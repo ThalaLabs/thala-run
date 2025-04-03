@@ -1,4 +1,5 @@
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { MSafeWallet } from "@msafe/aptos-wallet";
 import { Link, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { SubmitHandler, useFormContext } from "react-hook-form";
@@ -87,24 +88,58 @@ export const useFunctionSubmit = () => {
     try {
       const client = getAptosClient(network as NetworkType);
 
-      const transaction = await client.transaction.build.simple({
-        sender: walletAccount.address,
-        data: {
-          function: `${account}::${module}::${func}`,
-          typeArguments: data.typeArgs,
-          functionArguments: data.args,
-        },
-      });
+      const isMSafeWallet = MSafeWallet.inMSafeWallet();
 
-      const [userTransactionResponse] =
-        await client.transaction.simulate.simple({
-          signerPublicKey: new Ed25519PublicKey(
-            walletAccount.publicKey as HexInput
-          ),
-          transaction,
+      if (isMSafeWallet) {
+        const multisigAddress = walletAccount.address;
+
+        // TODO: investigate if there's a way to get the browser wallet account connected to the msafe UI
+        // That account would be an owner on this multisig account
+        // If there isn't a way propose a way for MSafeWallet to expose this
+        const ownerAccount = walletAccount;
+
+        // Build transaction using owner as sender, but include multisig data
+        const transaction = await client.transaction.build.simple({
+          sender: ownerAccount.address,
+          data: {
+            function: `${account}::${module}::${func}`,
+            typeArguments: data.typeArgs,
+            functionArguments: data.args,
+            // Include multisig address to indicate this is a multisig transaction
+            multisigAddress: multisigAddress
+          },
         });
-      setIsSimulation(true);
-      setExecutionResult(JSON.stringify(userTransactionResponse));
+
+        const ownerPublicKey = ownerAccount.publicKey
+
+        const [userTransactionResponse] =
+          await client.transaction.simulate.simple({
+            signerPublicKey: new Ed25519PublicKey(ownerPublicKey as HexInput),
+            transaction,
+          });
+
+        setIsSimulation(true);
+        setExecutionResult(JSON.stringify(userTransactionResponse));
+      } else {
+        const transaction = await client.transaction.build.simple({
+          sender: walletAccount.address,
+          data: {
+            function: `${account}::${module}::${func}`,
+            typeArguments: data.typeArgs,
+            functionArguments: data.args,
+          },
+        });
+
+        const [userTransactionResponse] =
+          await client.transaction.simulate.simple({
+            signerPublicKey: new Ed25519PublicKey(
+              walletAccount.publicKey as HexInput
+            ),
+            transaction,
+          });
+        setIsSimulation(true);
+        setExecutionResult(JSON.stringify(userTransactionResponse));
+      }
     } catch (error: any) {
       setExecutionResult(undefined);
       console.log("error", error);
