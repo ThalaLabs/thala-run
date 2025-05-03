@@ -1,5 +1,4 @@
-import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Box, Flex, Heading, HStack, Link, Stack } from "@chakra-ui/react";
+import { Box, Flex, Stack } from "@chakra-ui/react";
 import { useContext, useEffect, useRef } from "react";
 import AccountInput from "./AccountInput";
 import Explorer from "./Explorer";
@@ -26,7 +25,6 @@ export default function TxAdvanceForm() {
   return (
     <Flex h="100vh">
       <Box w="320px" borderRight="1px" borderColor="gray.200" padding="20px">
-        <Heading size="lg">thala.run</Heading>
         <GetModules />
       </Box>
       <Flex flex={1} direction="column">
@@ -50,15 +48,6 @@ export default function TxAdvanceForm() {
           ).reverse() :
             <Box>👈 Pick a function to run, or 👆 Try a new account</Box>}
         </Stack>
-        <HStack spacing="20px" padding="20px" justifyContent={"center"}>
-          <Link href="https://github.com/ThalaLabs/thala-run" isExternal>
-            GitHub <ExternalLinkIcon mx="2px" />
-          </Link>
-          <Box>|</Box>
-          <Link href="https://thala.fi" isExternal>
-            Built by Thala Labs <ExternalLinkIcon mx="2px" />
-          </Link>
-        </HStack>
       </Flex>
       {/* <DevTool control={control} /> */}
     </Flex >

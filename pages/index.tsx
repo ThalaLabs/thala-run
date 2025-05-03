@@ -9,6 +9,7 @@ import { GenerateLinkButton } from "../components/GenerateLinkButton";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { MSafeWallet } from "@msafe/aptos-wallet";
 import { MSafeWalletName } from "@msafe/aptos-wallet-adapter";
+import HeaderBar from "../components/HeaderBar";
 
 export default function Home() {
     const router = useRouter();
@@ -47,6 +48,7 @@ export default function Home() {
     return (
         <TxFormProvider defaultValues={defaultValues}>
             <FuncGroupProvider>
+                <HeaderBar />
                 <GenerateLinkButton />
                 <TxAdvanceForm />
             </FuncGroupProvider>
