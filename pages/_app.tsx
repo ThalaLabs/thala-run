@@ -4,7 +4,6 @@ import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { PetraWallet } from "petra-plugin-wallet-adapter";
 import { PontemWallet } from "@pontem/wallet-adapter-plugin";
 import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
-import { MartianWallet } from "@martianwallet/aptos-wallet-adapter";
 import { MSafeWalletAdapter } from "@msafe/aptos-wallet-adapter";
 
 const config = {
@@ -21,7 +20,6 @@ export default function App({ Component, pageProps }: AppProps) {
         plugins={[
           new PetraWallet(),
           new PontemWallet(),
-          new MartianWallet(),
           new MSafeWalletAdapter(),
         ]}
         autoConnect={true}
