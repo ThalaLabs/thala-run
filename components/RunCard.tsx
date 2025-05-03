@@ -101,7 +101,7 @@ export function RunCard({ id }: { id: string }) {
               <EditableName fieldPath="funcComment" fontSize={"md"} fontWeight={"semibold"} />
               <Link
                 variant="outline"
-                href={`https://aptscan.ai/accounts/${values.account}?viewMode=${moveFunc.is_entry ? "write" : "read"
+                href={`https://explorer.ai/accounts/${values.account}?viewMode=${moveFunc.is_entry ? "write" : "read"
                   }&module=${values.module}&functionName=${moveFunc.name
                   }&network=${network}#modules`}
                 isExternal
@@ -204,7 +204,7 @@ export function RunCard({ id }: { id: string }) {
                         isExternal
                         ml={2}
                         color="blue.600"
-                        href={`https://aptscan.ai/transactions/${executionResult}?network=${network}`}
+                        href={`https://explorer.aptoslabs.com/txn/${executionResult}?network=${network}`}
                       >
                         {executionResult}
                       </Link>
