@@ -5,7 +5,6 @@ export const NetworkEnum = z.enum([
   Network.DEVNET,
   Network.TESTNET,
   Network.MAINNET,
-  "movement porto",
   "movement mainnet",
   "movement bardock",
 ]);

@@ -12,7 +12,6 @@ const CUSTOM_NETWORKS = {
   testnet: "https://fullnode.testnet.aptoslabs.com/v1",
   mainnet: "https://fullnode.mainnet.aptoslabs.com/v1",
   "movement mainnet": "https://mainnet.movementnetwork.xyz/v1",
-  "movement porto": "https://aptos.testnet.porto.movementlabs.xyz/v1",
   "movement bardock": "https://aptos.testnet.bardock.movementlabs.xyz/v1",
 };
 
