@@ -1,4 +1,4 @@
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { useWallet, WalletName } from "@aptos-labs/wallet-adapter-react";
 import {
   Button,
   ButtonProps,
@@ -11,18 +11,38 @@ import {
   Stack,
   useDisclosure,
 } from "@chakra-ui/react";
-import { MSafeWalletName } from "@msafe/aptos-wallet-adapter";
 
 interface ConnectWalletProps extends ButtonProps { }
 
 export function ConnectWallet({ ...props }: ConnectWalletProps) {
-  const { connect, wallets } = useWallet();
+  const { connected, connect, disconnect, account, wallets } = useWallet();
   const { isOpen, onOpen, onClose } = useDisclosure();
+ 
+  const handleConnect = (walletName: string) => {
+    try {
+      connect(walletName as WalletName); 
+      console.log('Connected to wallet:', account);
+    } catch (error) {
+      console.error('Failed to connect to wallet:', error);
+    }
+  };
+ 
+  const handleDisconnect = () => {
+    try {
+      disconnect();
+      console.log('Disconnected from wallet');
+    } catch (error) {
+      console.error('Failed to disconnect from wallet:', error);
+    }
+  };
+
   return (
     <>
-      <Button onClick={onOpen} {...props}>
+      {connected ? <Button onClick={handleDisconnect} {...props}>
+        Disconnect
+      </Button> : <Button onClick={onOpen} {...props}>
         Connect Wallet
-      </Button>
+      </Button>}
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
@@ -33,8 +53,9 @@ export function ConnectWallet({ ...props }: ConnectWalletProps) {
               {wallets?.map((wallet) => (
                 <Button
                   key={wallet.name}
-                  onClick={() => wallet.readyState === "Installed" ? connect(wallet.name) : window.open(
-                    wallet.name === MSafeWalletName ? `https://aptos.m-safe.io/store/0?url=${window.location.href}` : wallet.url)}
+                  onClick={() => {
+                    handleConnect(wallet.name);
+                  }}
                   disabled={wallet.readyState !== "Installed"}
                 >
                   {wallet.name}

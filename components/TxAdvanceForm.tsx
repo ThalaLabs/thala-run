@@ -6,8 +6,8 @@ import { FuncGroupContext } from "./FuncGroupProvider";
 import GetModules from "./GetModules";
 import { RunCard } from "./RunCard";
 import SelectNetwork from "./SelectNetwork";
-import ToggleWallet from "./ToggleWallet";
 import TxFormProvider from "./TxFormProvider";
+import { ConnectWallet } from "./ConnectWallet";
 
 export default function TxAdvanceForm() {
   const context = useContext(FuncGroupContext);
@@ -32,7 +32,7 @@ export default function TxAdvanceForm() {
           <SelectNetwork />
           <AccountInput />
           <Explorer />
-          <ToggleWallet />
+          <ConnectWallet />
         </Flex>
         <Stack ref={ref} minHeight="calc(100vh - 180px)" p={8} gap={10} overflowY="auto">
           {context?.funcGroup.length ? context?.funcGroup.map((func) =>
