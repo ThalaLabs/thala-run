@@ -161,7 +161,7 @@ export const useFunctionSubmit = () => {
         transactionHash: hash,
       });
 
-      const href = `https://aptscan.ai/transactions/${hash}?network=${network}`;
+      const href = `https://explorer.aptoslabs.com/txn/${hash}?network=${network}`;
       setExecutionResult(hash);
 
       toast({
