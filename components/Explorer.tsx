@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
-import { Button, Flex, Link } from "@chakra-ui/react";
+import { Link } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
 import { TxFormType } from "../lib/schema";
 
@@ -8,14 +8,15 @@ export default function Explorer() {
   const { network, account } = watch();
 
   return (
-    <Flex justifyContent="center" alignItems="center">
-      <Link
-        variant="outline"
-        href={`https://explorer.aptoslabs.com/account/${account}?network=${network}#modules`}
-        isExternal
-      >
-        <ExternalLinkIcon mx="2px" />
-      </Link>
-    </Flex>
+    <Link
+      href={`https://explorer.aptoslabs.com/account/${account}?network=${network}#modules`}
+      isExternal
+      display="flex"
+      alignItems="center"
+      height="100%"
+      pr={2}
+    >
+      <ExternalLinkIcon />
+    </Link>
   );
 }

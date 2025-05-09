@@ -1,6 +1,7 @@
-import { Input } from "@chakra-ui/react";
+import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import { useController, useFormContext } from "react-hook-form";
 import { TxFormType } from "../lib/schema";
+import Explorer from "./Explorer";
 
 export default function AccountInput() {
   const { control, resetField } = useFormContext<TxFormType>();
@@ -13,16 +14,20 @@ export default function AccountInput() {
   });
 
   return (
-    <Input
-      flex={1}
-      value={value}
-      onChange={(e) => {
-        onChange(e.target.value);
-        resetField("typeArgs", { defaultValue: [] });
-        resetField("args", { defaultValue: [] });
-        resetField("module", { defaultValue: "" });
-        resetField("func", { defaultValue: "" });
-      }}
-    />
+    <InputGroup flex={1}>
+      <Input
+        value={value}
+        onChange={(e) => {
+          onChange(e.target.value);
+          resetField("typeArgs", { defaultValue: [] });
+          resetField("args", { defaultValue: [] });
+          resetField("module", { defaultValue: "" });
+          resetField("func", { defaultValue: "" });
+        }}
+      />
+      <InputRightElement>
+        <Explorer />
+      </InputRightElement>
+    </InputGroup>
   );
 }

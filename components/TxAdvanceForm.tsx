@@ -31,7 +31,6 @@ export default function TxAdvanceForm() {
         <Flex padding={"20px"} gap="20px">
           <SelectNetwork />
           <AccountInput />
-          <Explorer />
           <ConnectWallet />
         </Flex>
         <Stack ref={ref} minHeight="calc(100vh - 180px)" p={8} gap={10} overflowY="auto">
