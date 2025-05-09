@@ -3,29 +3,40 @@ import {
   AptosConfig,
   MoveFunction,
   Network as AptosNetwork,
+  Network,
 } from "@aptos-labs/ts-sdk";
 import { ParsedUrlQuery } from "querystring";
 import { NetworkType } from "./schema";
 
-const CUSTOM_NETWORKS = {
-  devnet: "https://fullnode.devnet.aptoslabs.com/v1",
-  testnet: "https://fullnode.testnet.aptoslabs.com/v1",
-  mainnet: "https://fullnode.mainnet.aptoslabs.com/v1",
+const DEFAULT_RPC: Record<NetworkType, string> = {
+  "aptos mainnet": "https://fullnode.mainnet.aptoslabs.com/v1",
+  "aptos testnet": "https://fullnode.testnet.aptoslabs.com/v1",
+  "aptos devnet": "https://fullnode.devnet.aptoslabs.com/v1",
   "movement mainnet": "https://mainnet.movementnetwork.xyz/v1",
   "movement bardock": "https://testnet.bardock.movementnetwork.xyz/v1",
 };
 
 export function getAptosClient(network: NetworkType): Aptos {
-  if (network in CUSTOM_NETWORKS) {
-    const aptosConfig = new AptosConfig({
-      network: AptosNetwork.CUSTOM,
-      fullnode: CUSTOM_NETWORKS[network],
-    });
-    const aptos = new Aptos(aptosConfig);
-
-    return aptos;
+  let aptosNetwork: Network;
+  switch (network) {
+    case "aptos mainnet":
+      aptosNetwork = AptosNetwork.MAINNET;
+      break;
+    case "aptos testnet":
+      aptosNetwork = AptosNetwork.TESTNET;
+      break;
+    case "aptos devnet":
+      aptosNetwork = AptosNetwork.DEVNET;
+      break;
+    default:
+      aptosNetwork = Network.MAINNET;
+      break;
   }
-  throw new Error(`Unsupported network: ${network}`);
+  const aptosConfig = new AptosConfig({
+    network: aptosNetwork,
+    fullnode: DEFAULT_RPC[network],
+  });
+  return new Aptos(aptosConfig);
 }
 
 export function functionSignature(func: MoveFunction): string {

@@ -1,10 +1,9 @@
-import { Network } from "@aptos-labs/ts-sdk";
 import { z } from "zod";
 
 export const NetworkEnum = z.enum([
-  Network.DEVNET,
-  Network.TESTNET,
-  Network.MAINNET,
+  "aptos mainnet",
+  "aptos testnet",
+  "aptos devnet",
   "movement mainnet",
   "movement bardock",
 ]);
